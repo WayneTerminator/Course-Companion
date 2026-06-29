@@ -1,0 +1,8 @@
+{
+  "name": "Course Companion",
+  "short_name": "Course Companion",
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "#063f2b",
+  "background_color": "#f5ecd7"
+}

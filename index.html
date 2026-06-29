@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Course Companion</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="app-shell">
+
+    <section id="home-screen" class="screen active">
+      <section class="hero-card">
+        <div class="brand-mark">CC</div>
+        <p class="eyebrow">San Lameer Pilot</p>
+        <h1>Course Companion</h1>
+        <p class="tagline">Know your game.</p>
+
+        <div class="course-card">
+          <div>
+            <p class="label">Current Course</p>
+            <h2>San Lameer Mashie</h2>
+            <p>9 hole par 3 · Stroke play · Stableford</p>
+          </div>
+          <div class="course-badge">Par 27</div>
+        </div>
+
+        <div class="setup-card">
+          <label>Number of Players</label>
+          <div class="player-count">
+            <button class="count-button active" data-count="1">1</button>
+            <button class="count-button" data-count="2">2</button>
+            <button class="count-button" data-count="3">3</button>
+            <button class="count-button" data-count="4">4</button>
+          </div>
+
+          <div id="player-inputs"></div>
+
+          <label>18-hole Course Handicap</label>
+          <input id="course-handicap" type="number" min="0" max="54" value="30" />
+          <p class="helper">Mashie handicap is calculated as half your course handicap.</p>
+        </div>
+
+        <div class="action-grid">
+          <button class="primary-action" id="start-round">⛳ Start Round</button>
+          <button id="history-button">📅 History</button>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <div class="stat-card"><span>Rounds Saved</span><strong id="rounds-count">0</strong></div>
+        <div class="stat-card"><span>Best Gross</span><strong id="best-gross">—</strong></div>
+        <div class="stat-card"><span>Best Stableford</span><strong id="best-stableford">—</strong></div>
+      </section>
+    </section>
+
+    <section id="round-screen" class="screen">
+      <div class="top-bar">
+        <button class="small-button" id="back-home">← Home</button>
+        <div>
+          <p class="eyebrow">Live Round</p>
+          <h2>San Lameer Mashie</h2>
+        </div>
+      </div>
+
+      <section class="hole-photo">
+        <div>
+          <p class="eyebrow">Hole Photo</p>
+          <p>Photo placeholder — we’ll add your tee-sign images later.</p>
+        </div>
+      </section>
+
+      <section class="hole-title-card">
+        <div>
+          <p class="eyebrow">Current Hole</p>
+          <h2 id="hole-title">Hole 1</h2>
+          <p id="hole-details">70m · Par 3 · SI 7</p>
+        </div>
+        <div class="course-badge" id="hole-number-badge">1 / 9</div>
+      </section>
+
+      <div id="players-score-area"></div>
+
+      <section class="live-summary" id="live-summary"></section>
+
+      <div class="round-nav">
+        <button id="previous-hole">← Previous</button>
+        <button class="primary-action" id="next-hole">Next →</button>
+      </div>
+
+      <button class="finish-button" id="finish-round">Finish & Save Round</button>
+      <button class="reset-button" id="reset-round">Reset Scores</button>
+    </section>
+
+    <section id="history-screen" class="screen">
+      <div class="top-bar">
+        <button class="small-button" id="history-back">← Home</button>
+        <div>
+          <p class="eyebrow">Saved Rounds</p>
+          <h2>History</h2>
+        </div>
+      </div>
+      <div id="history-list" class="history-list"></div>
+    </section>
+
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
