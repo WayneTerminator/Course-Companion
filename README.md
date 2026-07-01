@@ -31,3 +31,13 @@ Image test build.
 The uploaded image was converted into web-friendly JPG assets:
 - assets/mashie-hero.jpg
 - assets/mashie-tile.jpg
+
+
+# Course Companion v0.5.5
+
+Scoring clarity fix.
+
+## Changes
+- Added clear selected-score display on each player score card
+- This makes exact scores like 6 obvious even when the 6+ button is highlighted
+- Scoring logic unchanged

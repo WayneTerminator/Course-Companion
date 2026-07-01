@@ -164,8 +164,14 @@ function renderCurrentHole() {
     return `
       <section class="hole-card">
         <div class="player-header">
-          <div class="player-name">${player.name}</div>
-          <div class="result-pill">${resultLabel(score, hole.par)}</div>
+          <div>
+            <div class="player-name">${player.name}</div>
+            <div class="result-pill result-inline">${resultLabel(score, hole.par)}</div>
+          </div>
+          <div class="selected-score-display">
+            <span>Score</span>
+            <strong>${score}</strong>
+          </div>
         </div>
 
         <p class="helper">${helperText}</p>
