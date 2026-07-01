@@ -1,7 +1,7 @@
 const courses = {
   mashie: {
     name: "San Lameer Mashie",
-    details: "9 hole par 3 · Stroke play · Stableford",
+    details: "9 hole par 3 · 806m · Stableford ready",
     badge: "Par 27",
     holes: [
       { hole: 1, distance: 70, par: 3, stroke: 7 },
@@ -162,8 +162,8 @@ function renderCurrentHole() {
             const numericValue = parseInt(option, 10);
             const selected = score === numericValue || (isExpanded(playerIndex) && isPlus && score >= numericValue);
             return `
-              <button 
-                class="score-button ${selected ? "selected" : ""}" 
+              <button
+                class="score-button ${selected ? "selected" : ""}"
                 onclick="${isPlus ? `handlePlusScore(${playerIndex}, ${numericValue})` : `setScore(${playerIndex}, ${numericValue})`}">
                 ${option}
               </button>

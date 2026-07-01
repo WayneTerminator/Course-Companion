@@ -14,61 +14,76 @@
 
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#0b4f3a">
+  <meta name="theme-color" content="#063f2b">
 </head>
 <body>
   <main class="app-shell">
 
     <section id="home-screen" class="screen active">
-      <section class="hero-card">
-        <div class="brand-mark">CC</div>
-        <p class="eyebrow">Playtest v0.5.1</p>
-        <h1>Course Companion</h1>
-        <p class="tagline">Know your game.</p>
+      <section class="home-hero">
+        <div class="home-topline">
+          <div class="brand-mark">CC</div>
+          <div class="version-pill">Playtest v0.5.2</div>
+        </div>
 
-        <div class="setup-card">
-          <label>Select Course</label>
+        <p class="eyebrow">Course Companion</p>
+        <h1>Know your game.</h1>
+        <p class="tagline">Fast, simple scoring for every round.</p>
 
+        <section class="featured-course">
+          <div>
+            <p class="label light">Selected course</p>
+            <h2 id="selected-course-name">San Lameer Mashie</h2>
+            <p id="selected-course-details">9 hole par 3 · 806m · Stableford ready</p>
+          </div>
+          <div class="course-badge" id="selected-course-badge">Par 27</div>
+        </section>
+
+        <button class="primary-action big-start" id="start-round">⛳ Start Round</button>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Courses</p>
+            <h2>Select Course</h2>
+          </div>
+        </div>
+
+        <div class="course-grid">
           <button class="course-select active-course" data-course="mashie">
-            <strong>San Lameer Mashie</strong>
-            <span>9 hole par 3 · Ready</span>
+            <span class="course-name">San Lameer Mashie</span>
+            <span class="course-meta">9 holes · Par 27 · Ready</span>
           </button>
 
           <button class="course-select disabled-course" data-course="championship">
-            <strong>San Lameer Championship</strong>
-            <span>Coming soon — needs official scorecard data</span>
+            <span class="course-name">San Lameer Championship</span>
+            <span class="course-meta">Coming soon · scorecard data needed</span>
           </button>
         </div>
+      </section>
 
-        <div class="course-card">
+      <section class="panel">
+        <div class="panel-header">
           <div>
-            <p class="label">Current Course</p>
-            <h2 id="selected-course-name">San Lameer Mashie</h2>
-            <p id="selected-course-details">9 hole par 3 · Stroke play · Stableford</p>
+            <p class="eyebrow">Round Setup</p>
+            <h2>Players & Handicap</h2>
           </div>
-          <div class="course-badge" id="selected-course-badge">Par 27</div>
         </div>
 
-        <div class="setup-card">
-          <label>Number of Players</label>
-          <div class="player-count">
-            <button class="count-button active" data-count="1">1</button>
-            <button class="count-button" data-count="2">2</button>
-            <button class="count-button" data-count="3">3</button>
-            <button class="count-button" data-count="4">4</button>
-          </div>
-
-          <div id="player-inputs"></div>
-
-          <label>18-hole Course Handicap</label>
-          <input id="course-handicap" type="number" min="0" max="54" value="30" />
-          <p class="helper">Mashie handicap is calculated as half your course handicap.</p>
+        <label>Number of Players</label>
+        <div class="player-count">
+          <button class="count-button active" data-count="1">1</button>
+          <button class="count-button" data-count="2">2</button>
+          <button class="count-button" data-count="3">3</button>
+          <button class="count-button" data-count="4">4</button>
         </div>
 
-        <div class="action-grid">
-          <button class="primary-action" id="start-round">⛳ Start Round</button>
-          <button id="history-button">📅 History</button>
-        </div>
+        <div id="player-inputs"></div>
+
+        <label>18-hole Course Handicap</label>
+        <input id="course-handicap" type="number" min="0" max="54" value="30" />
+        <p class="helper">Mashie handicap is calculated as half your course handicap.</p>
       </section>
 
       <section class="dashboard">
@@ -76,6 +91,8 @@
         <div class="stat-card"><span>Best Gross</span><strong id="best-gross">—</strong></div>
         <div class="stat-card"><span>Best Stableford</span><strong id="best-stableford">—</strong></div>
       </section>
+
+      <button class="secondary-action full-width" id="history-button">📅 View History</button>
     </section>
 
     <section id="round-screen" class="screen">

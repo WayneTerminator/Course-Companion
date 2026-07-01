@@ -4,8 +4,8 @@
   "description": "Your golf companion. Keep score. Know your game.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#0b4f3a",
-  "theme_color": "#0b4f3a",
+  "background_color": "#063f2b",
+  "theme_color": "#063f2b",
   "icons": [
     {
       "src": "assets/icon-192.png",
