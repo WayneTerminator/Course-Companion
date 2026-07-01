@@ -16,3 +16,18 @@ Course facts are based on the San Lameer Mashie page:
 https://www.sanlameer.co.za/golf/mashie-course/
 
 Photos are represented by CSS placeholders for now. Real photos can be added once we have suitable images and permission to use them.
+
+
+# Course Companion v0.5.4
+
+Image test build.
+
+## Changes
+- Added user's own Mashie photo as the course tile image
+- Added user's own Mashie photo as the course detail hero image
+- Kept v0.5.3 flow and scoring unchanged
+
+## Notes
+The uploaded image was converted into web-friendly JPG assets:
+- assets/mashie-hero.jpg
+- assets/mashie-tile.jpg
