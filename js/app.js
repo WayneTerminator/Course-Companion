@@ -1,8 +1,8 @@
 const courses = {
   mashie: {
     name: "San Lameer Mashie",
-    details: "9 hole par 3 · 806m · Stableford ready",
-    badge: "Par 27",
+    details: "9 holes · All par 3s · Par 27",
+    description: "The San Lameer Mashie is a compact 9-hole par-3 course that is ideal for quick rounds, sharpening short game skills, and relaxed social golf.",
     holes: [
       { hole: 1, distance: 70, par: 3, stroke: 7 },
       { hole: 2, distance: 82, par: 3, stroke: 8 },
@@ -25,12 +25,15 @@ let currentHole = 0;
 let expandedScorePicker = null;
 
 const homeScreen = document.getElementById("home-screen");
+const courseDetailScreen = document.getElementById("course-detail-screen");
+const setupScreen = document.getElementById("setup-screen");
 const roundScreen = document.getElementById("round-screen");
 const historyScreen = document.getElementById("history-screen");
 
 function showScreen(screen) {
-  [homeScreen, roundScreen, historyScreen].forEach(s => s.classList.remove("active"));
+  [homeScreen, courseDetailScreen, setupScreen, roundScreen, historyScreen].forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function selectCourse(key) {
@@ -43,14 +46,25 @@ function selectCourse(key) {
   const selected = courses[key];
   course = selected.holes;
 
-  document.getElementById("selected-course-name").textContent = selected.name;
-  document.getElementById("selected-course-details").textContent = selected.details;
-  document.getElementById("selected-course-badge").textContent = selected.badge;
+  document.getElementById("detail-course-name").textContent = selected.name;
+  document.getElementById("detail-hero-title").textContent = selected.name;
+  document.getElementById("detail-hero-subtitle").textContent = selected.details;
+  document.getElementById("detail-description").textContent = selected.description;
+  document.getElementById("setup-course-name").textContent = selected.name;
   document.getElementById("round-course-name").textContent = selected.name;
 
-  document.querySelectorAll(".course-select").forEach(btn => {
-    btn.classList.toggle("active-course", btn.dataset.course === key);
-  });
+  renderCourseDistances();
+  showScreen(courseDetailScreen);
+}
+
+function renderCourseDistances() {
+  const container = document.getElementById("detail-hole-distances");
+  container.innerHTML = course.map(hole => `
+    <div class="hole-distance">
+      <span>Hole ${hole.hole}</span>
+      <strong>${hole.distance}m</strong>
+    </div>
+  `).join("");
 }
 
 function renderPlayerInputs() {
@@ -319,14 +333,17 @@ function updateHomeStats() {
   document.getElementById("best-stableford").textContent = Math.max(...rounds.map(r => r.stableford));
 }
 
+document.querySelectorAll(".course-tile").forEach(btn => {
+  btn.addEventListener("click", () => selectCourse(btn.dataset.course));
+});
+
 document.querySelectorAll(".count-button").forEach(btn => {
   btn.addEventListener("click", () => setPlayerCount(Number(btn.dataset.count)));
 });
 
-document.querySelectorAll(".course-select").forEach(btn => {
-  btn.addEventListener("click", () => selectCourse(btn.dataset.course));
-});
-
+document.getElementById("course-detail-back").addEventListener("click", () => showScreen(homeScreen));
+document.getElementById("continue-to-setup").addEventListener("click", () => showScreen(setupScreen));
+document.getElementById("setup-back").addEventListener("click", () => showScreen(courseDetailScreen));
 document.getElementById("start-round").addEventListener("click", startRound);
 document.getElementById("back-home").addEventListener("click", () => showScreen(homeScreen));
 document.getElementById("history-back").addEventListener("click", () => showScreen(homeScreen));
@@ -339,7 +356,7 @@ document.getElementById("reset-round").addEventListener("click", resetScores);
 document.getElementById("next-hole").addEventListener("click", nextHole);
 document.getElementById("previous-hole").addEventListener("click", previousHole);
 
-selectCourse("mashie");
 setPlayerCount(1);
+renderCourseDistances();
 updateHomeStats();
 renderHistory();

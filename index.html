@@ -19,58 +19,120 @@
 <body>
   <main class="app-shell">
 
+    <!-- HOME -->
     <section id="home-screen" class="screen active">
       <section class="home-hero">
         <div class="home-topline">
           <div class="brand-mark">CC</div>
-          <div class="version-pill">Playtest v0.5.2</div>
+          <div class="version-pill">Playtest v0.5.3</div>
         </div>
 
         <p class="eyebrow">Course Companion</p>
-        <h1>Know your game.</h1>
-        <p class="tagline">Fast, simple scoring for every round.</p>
-
-        <section class="featured-course">
-          <div>
-            <p class="label light">Selected course</p>
-            <h2 id="selected-course-name">San Lameer Mashie</h2>
-            <p id="selected-course-details">9 hole par 3 · 806m · Stableford ready</p>
-          </div>
-          <div class="course-badge" id="selected-course-badge">Par 27</div>
-        </section>
-
-        <button class="primary-action big-start" id="start-round">⛳ Start Round</button>
+        <h1>Choose your course.</h1>
+        <p class="tagline">Fast, simple scoring. Built around the course you are playing today.</p>
       </section>
 
       <section class="panel">
         <div class="panel-header">
           <div>
             <p class="eyebrow">Courses</p>
-            <h2>Select Course</h2>
+            <h2>Available Courses</h2>
           </div>
         </div>
 
         <div class="course-grid">
-          <button class="course-select active-course" data-course="mashie">
+          <button class="course-tile active-course" data-course="mashie">
+            <span class="course-tile-image mashie-art"></span>
             <span class="course-name">San Lameer Mashie</span>
-            <span class="course-meta">9 holes · Par 27 · Ready</span>
+            <span class="course-meta">9 holes · Par 27 · Stableford ready</span>
+            <span class="course-action">View Course →</span>
           </button>
 
-          <button class="course-select disabled-course" data-course="championship">
+          <button class="course-tile disabled-course" data-course="championship">
+            <span class="course-tile-image championship-art"></span>
             <span class="course-name">San Lameer Championship</span>
             <span class="course-meta">Coming soon · scorecard data needed</span>
+            <span class="course-action">Coming Soon</span>
           </button>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <div class="stat-card"><span>Rounds Saved</span><strong id="rounds-count">0</strong></div>
+        <div class="stat-card"><span>Best Gross</span><strong id="best-gross">—</strong></div>
+        <div class="stat-card"><span>Best Stableford</span><strong id="best-stableford">—</strong></div>
+      </section>
+
+      <button class="secondary-action full-width" id="history-button">📅 View History</button>
+    </section>
+
+    <!-- COURSE DETAIL -->
+    <section id="course-detail-screen" class="screen">
+      <div class="top-bar">
+        <button class="small-button" id="course-detail-back">← Courses</button>
+        <div>
+          <p class="eyebrow">Course Guide</p>
+          <h2 id="detail-course-name">San Lameer Mashie</h2>
+        </div>
+      </div>
+
+      <section class="course-hero mashie-art-large">
+        <div class="course-hero-overlay">
+          <p class="eyebrow">Selected Course</p>
+          <h1 id="detail-hero-title">San Lameer Mashie</h1>
+          <p id="detail-hero-subtitle">9 holes · All par 3s · Par 27</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">About</p>
+        <h2>A quick, informal par-3 challenge</h2>
+        <p class="body-copy" id="detail-description">
+          The San Lameer Mashie is a compact 9-hole par-3 course that is ideal for quick rounds, sharpening short game skills, and relaxed social golf.
+        </p>
+      </section>
+
+      <section class="fact-grid">
+        <div class="fact-card"><span>Holes</span><strong>9</strong></div>
+        <div class="fact-card"><span>Par</span><strong>27</strong></div>
+        <div class="fact-card"><span>Longest</span><strong>134m</strong></div>
+        <div class="fact-card"><span>Shortest</span><strong>58m</strong></div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Useful Notes</p>
+        <div class="note-list">
+          <div>Maximum group size: 4 players</div>
+          <div>Players should start from Hole 1</div>
+          <div>Mashie handicap: half your 18-hole course handicap</div>
+          <div>No golf carts on the Mashie</div>
         </div>
       </section>
 
       <section class="panel">
         <div class="panel-header">
           <div>
-            <p class="eyebrow">Round Setup</p>
-            <h2>Players & Handicap</h2>
+            <p class="eyebrow">Hole Distances</p>
+            <h2>Scorecard Preview</h2>
           </div>
         </div>
+        <div class="hole-distance-grid" id="detail-hole-distances"></div>
+      </section>
 
+      <button class="primary-action big-start full-width" id="continue-to-setup">Continue to Round Setup</button>
+    </section>
+
+    <!-- ROUND SETUP -->
+    <section id="setup-screen" class="screen">
+      <div class="top-bar">
+        <button class="small-button" id="setup-back">← Course</button>
+        <div>
+          <p class="eyebrow">Round Setup</p>
+          <h2 id="setup-course-name">San Lameer Mashie</h2>
+        </div>
+      </div>
+
+      <section class="panel">
         <label>Number of Players</label>
         <div class="player-count">
           <button class="count-button active" data-count="1">1</button>
@@ -83,18 +145,13 @@
 
         <label>18-hole Course Handicap</label>
         <input id="course-handicap" type="number" min="0" max="54" value="30" />
-        <p class="helper">Mashie handicap is calculated as half your course handicap.</p>
+        <p class="helper">For the Mashie, Course Companion calculates your playing handicap as half of this.</p>
       </section>
 
-      <section class="dashboard">
-        <div class="stat-card"><span>Rounds Saved</span><strong id="rounds-count">0</strong></div>
-        <div class="stat-card"><span>Best Gross</span><strong id="best-gross">—</strong></div>
-        <div class="stat-card"><span>Best Stableford</span><strong id="best-stableford">—</strong></div>
-      </section>
-
-      <button class="secondary-action full-width" id="history-button">📅 View History</button>
+      <button class="primary-action big-start full-width" id="start-round">⛳ Start Round</button>
     </section>
 
+    <!-- ROUND -->
     <section id="round-screen" class="screen">
       <div class="top-bar">
         <button class="small-button" id="back-home">← Home</button>
@@ -133,6 +190,7 @@
       <button class="reset-button" id="reset-round">Reset Scores</button>
     </section>
 
+    <!-- HISTORY -->
     <section id="history-screen" class="screen">
       <div class="top-bar">
         <button class="small-button" id="history-back">← Home</button>

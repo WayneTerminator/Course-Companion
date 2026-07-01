@@ -1,12 +1,18 @@
-# Course Companion v0.5.2
+# Course Companion v0.5.3
 
-Playtest polish build.
+Final playtest update for today.
 
 ## Changes
-- Cleaner premium intro screen
-- Stronger selected-course card
-- More polished round setup section
-- Direct score buttons retained
-- 6+ expanded score picker retained
-- Next button retained
-- iPhone double-tap zoom protection retained
+- New flow: Home → Course Detail → Round Setup → Score Round
+- Added San Lameer Mashie course detail page
+- Added course guide style hero section
+- Added quick facts and useful course notes
+- Added scorecard preview / hole distances
+- Moved players and handicap setup to its own Round Setup screen
+- Scoring workflow remains unchanged from v0.5.2
+
+## Notes
+Course facts are based on the San Lameer Mashie page:
+https://www.sanlameer.co.za/golf/mashie-course/
+
+Photos are represented by CSS placeholders for now. Real photos can be added once we have suitable images and permission to use them.

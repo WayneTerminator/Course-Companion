@@ -42,6 +42,7 @@ body {
 .home-hero,
 .panel,
 .stat-card,
+.fact-card,
 .hole-card,
 .history-item,
 .top-bar,
@@ -119,8 +120,8 @@ body {
 }
 
 h1 {
-  font-size: 44px;
-  line-height: 0.97;
+  font-size: 42px;
+  line-height: 0.98;
   margin: 6px 0 10px;
   color: var(--green);
   letter-spacing: -1.8px;
@@ -132,36 +133,12 @@ h2 {
   letter-spacing: -0.5px;
 }
 
-.tagline {
-  font-size: 18px;
+.tagline,
+.body-copy {
+  font-size: 17px;
+  line-height: 1.45;
   color: var(--muted);
-  margin: 0 0 20px;
-}
-
-.featured-course {
-  margin: 22px 0 16px;
-  padding: 18px;
-  border-radius: 24px;
-  background:
-    linear-gradient(135deg, rgba(6, 63, 43, 0.96), rgba(13, 106, 69, 0.90)),
-    radial-gradient(circle at top right, rgba(215, 180, 106, 0.35), transparent 40%);
-  border: 1px solid rgba(215, 180, 106, 0.6);
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: center;
-}
-
-.featured-course h2 {
-  color: white;
-  margin: 2px 0 4px;
-  font-size: 24px;
-}
-
-.featured-course p {
   margin: 0;
-  color: rgba(255,255,255,0.78);
 }
 
 .label, label {
@@ -172,24 +149,6 @@ h2 {
   text-transform: uppercase;
   color: var(--muted);
   letter-spacing: 0.5px;
-}
-
-.label.light {
-  color: var(--gold);
-}
-
-.course-badge {
-  min-width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--gold);
-  color: var(--green);
-  display: grid;
-  place-items: center;
-  font-weight: 950;
-  text-align: center;
-  border: 2px solid rgba(255,255,255,0.45);
-  line-height: 1.05;
 }
 
 .panel {
@@ -206,40 +165,178 @@ h2 {
 
 .course-grid {
   display: grid;
-  gap: 10px;
+  gap: 12px;
 }
 
-.course-select {
+.course-tile {
   width: 100%;
   text-align: left;
-  margin: 0;
   display: grid;
-  gap: 5px;
+  grid-template-columns: 86px 1fr;
+  grid-template-areas:
+    "image name"
+    "image meta"
+    "image action";
+  column-gap: 14px;
+  align-items: center;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(6, 63, 43, 0.12);
+}
+
+.course-tile-image {
+  grid-area: image;
+  height: 92px;
+  border-radius: 18px;
+  display: block;
 }
 
 .course-name {
-  font-size: 17px;
+  grid-area: name;
+  font-size: 18px;
   font-weight: 950;
 }
 
 .course-meta {
+  grid-area: meta;
   color: var(--muted);
   font-size: 13px;
   font-weight: 700;
 }
 
+.course-action {
+  grid-area: action;
+  color: var(--green);
+  font-size: 13px;
+  font-weight: 950;
+}
+
 .active-course {
-  background: linear-gradient(135deg, var(--green), var(--green-light));
-  color: white;
   border: 2px solid var(--gold);
 }
 
-.active-course .course-meta {
-  color: rgba(255,255,255,0.8);
+.disabled-course {
+  opacity: 0.6;
 }
 
-.disabled-course {
-  opacity: 0.64;
+.mashie-art,
+.mashie-art-large {
+  background:
+    linear-gradient(to top, rgba(6, 63, 43, 0.88), rgba(6, 63, 43, 0.05)),
+    radial-gradient(circle at 75% 25%, rgba(215, 180, 106, 0.7), transparent 18%),
+    linear-gradient(135deg, #a6bd6b, #0d6a45 55%, #063f2b);
+}
+
+.championship-art {
+  background:
+    linear-gradient(to top, rgba(6, 63, 43, 0.88), rgba(6, 63, 43, 0.12)),
+    linear-gradient(135deg, #d7b46a, #366b45 55%, #062b1e);
+}
+
+.course-hero {
+  min-height: 300px;
+  border-radius: 34px;
+  overflow: hidden;
+  margin: 10px 0 14px;
+  display: flex;
+  align-items: flex-end;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(215, 180, 106, 0.5);
+}
+
+.course-hero-overlay {
+  width: 100%;
+  padding: 24px;
+  background: linear-gradient(to top, rgba(2,31,22,0.88), transparent);
+  color: white;
+}
+
+.course-hero-overlay h1 {
+  color: white;
+  margin-bottom: 6px;
+}
+
+.course-hero-overlay p {
+  margin: 0;
+  color: rgba(255,255,255,0.86);
+}
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.fact-card {
+  padding: 18px;
+  text-align: center;
+}
+
+.fact-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.fact-card strong {
+  color: var(--green);
+  font-size: 28px;
+}
+
+.note-list {
+  display: grid;
+  gap: 8px;
+}
+
+.note-list div {
+  padding: 12px;
+  background: rgba(239, 227, 194, 0.55);
+  border-radius: 16px;
+  color: var(--green);
+  font-weight: 800;
+}
+
+.hole-distance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.hole-distance {
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(239, 227, 194, 0.6);
+  text-align: center;
+}
+
+.hole-distance span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.hole-distance strong {
+  color: var(--green);
+  font-size: 17px;
+}
+
+.course-badge {
+  min-width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--green);
+  display: grid;
+  place-items: center;
+  font-weight: 950;
+  text-align: center;
+  border: 2px solid rgba(255,255,255,0.45);
+  line-height: 1.05;
 }
 
 input {
@@ -286,15 +383,13 @@ button {
 }
 
 .big-start {
-  width: 100%;
   min-height: 60px;
   font-size: 18px;
-  margin-top: 6px;
+  margin-top: 14px;
 }
 
 .full-width {
   width: 100%;
-  margin-top: 14px;
 }
 
 .player-count {
@@ -477,5 +572,7 @@ button {
 
 @media (min-width: 720px) {
   .dashboard { grid-template-columns: repeat(3, 1fr); }
+  .fact-grid { grid-template-columns: repeat(4, 1fr); }
+  .hole-distance-grid { grid-template-columns: repeat(9, 1fr); }
   h1 { font-size: 58px; }
 }
