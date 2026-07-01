@@ -1,4 +1,4 @@
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
 :root {
   --green: #063f2b;
@@ -8,8 +8,9 @@
   --card: #fffaf0;
   --text: #14241d;
   --muted: #66746c;
-  --red: #9d2b2b;
 }
+
+html { touch-action: manipulation; }
 
 body {
   margin: 0;
@@ -20,12 +21,10 @@ body {
     linear-gradient(135deg, var(--green), #021f16);
   color: var(--text);
   padding: 18px;
+  user-select: none;
 }
 
-.app-shell {
-  max-width: 760px;
-  margin: 0 auto;
-}
+.app-shell { max-width: 760px; margin: 0 auto; }
 
 .screen { display: none; }
 .screen.active { display: block; }
@@ -44,10 +43,7 @@ body {
   border-radius: 28px;
 }
 
-.hero-card {
-  padding: 28px;
-  margin-top: 18px;
-}
+.hero-card { padding: 28px; margin-top: 18px; }
 
 .brand-mark {
   width: 72px;
@@ -71,20 +67,10 @@ body {
   font-weight: 800;
 }
 
-h1 {
-  font-size: 42px;
-  line-height: 1;
-  margin: 8px 0;
-  color: var(--green);
-}
-
+h1 { font-size: 42px; line-height: 1; margin: 8px 0; color: var(--green); }
 h2 { margin: 0; color: var(--green); }
 
-.tagline {
-  font-size: 18px;
-  color: var(--muted);
-  margin-top: 0;
-}
+.tagline { font-size: 18px; color: var(--muted); margin-top: 0; }
 
 .course-card {
   margin: 26px 0;
@@ -122,11 +108,27 @@ h2 { margin: 0; color: var(--green); }
   text-align: center;
 }
 
-.setup-card {
-  padding: 18px;
-  margin-bottom: 18px;
-  box-shadow: none;
+.setup-card { padding: 18px; margin-bottom: 18px; box-shadow: none; }
+
+.course-select {
+  width: 100%;
+  text-align: left;
+  margin: 8px 0;
+  display: grid;
+  gap: 4px;
 }
+
+.course-select strong { font-size: 17px; }
+.course-select span { color: var(--muted); font-size: 13px; }
+
+.active-course {
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: white;
+  border: 2px solid var(--gold);
+}
+
+.active-course span { color: rgba(255,255,255,0.8); }
+.disabled-course { opacity: 0.65; }
 
 input {
   width: 100%;
@@ -135,24 +137,14 @@ input {
   border-radius: 16px;
   border: 1px solid rgba(6, 63, 43, 0.2);
   font-size: 17px;
+  user-select: text;
 }
 
-.helper {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-}
+.helper { margin: 0; color: var(--muted); font-size: 13px; }
 
-.action-grid,
-.round-nav {
-  display: grid;
-  gap: 12px;
-}
+.action-grid, .round-nav { display: grid; gap: 12px; }
 
-.round-nav {
-  grid-template-columns: 1fr 1fr;
-  margin-top: 14px;
-}
+.round-nav { grid-template-columns: 1fr 1fr; margin-top: 14px; }
 
 button {
   border: none;
@@ -163,6 +155,7 @@ button {
   background: #efe3c2;
   color: var(--green);
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .primary-action,
@@ -196,11 +189,7 @@ button {
   border: 2px solid var(--gold);
 }
 
-.dashboard {
-  display: grid;
-  gap: 12px;
-  margin: 14px 0;
-}
+.dashboard { display: grid; gap: 12px; margin: 14px 0; }
 
 .stat-card {
   padding: 18px;
@@ -209,15 +198,8 @@ button {
   align-items: center;
 }
 
-.stat-card span {
-  color: var(--muted);
-  font-weight: 800;
-}
-
-.stat-card strong {
-  color: var(--green);
-  font-size: 28px;
-}
+.stat-card span { color: var(--muted); font-weight: 800; }
+.stat-card strong { color: var(--green); font-size: 28px; }
 
 .top-bar {
   padding: 16px;
@@ -227,11 +209,7 @@ button {
   align-items: center;
 }
 
-.small-button {
-  padding: 10px 12px;
-  border-radius: 14px;
-  font-size: 14px;
-}
+.small-button { padding: 10px 12px; border-radius: 14px; font-size: 14px; }
 
 .hole-photo {
   height: 180px;
@@ -245,9 +223,7 @@ button {
   margin-bottom: 14px;
 }
 
-.hole-photo p {
-  margin: 0;
-}
+.hole-photo p { margin: 0; }
 
 .hole-title-card {
   padding: 18px;
@@ -264,10 +240,7 @@ button {
   font-weight: 800;
 }
 
-.hole-card {
-  margin: 12px 0;
-  padding: 16px;
-}
+.hole-card { margin: 12px 0; padding: 16px; }
 
 .player-header {
   display: flex;
@@ -290,24 +263,23 @@ button {
   font-weight: 900;
 }
 
-.score-row {
+.score-buttons {
   display: grid;
-  grid-template-columns: 64px 1fr 64px;
-  gap: 10px;
-  align-items: center;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
   margin: 16px 0;
 }
 
-.score-row button {
-  font-size: 26px;
-  padding: 12px;
+.score-button {
+  min-height: 64px;
+  font-size: 25px;
+  font-weight: 950;
 }
 
-.score-value {
-  text-align: center;
-  font-size: 42px;
-  font-weight: 950;
-  color: var(--green);
+.score-button.selected {
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: white;
+  border: 2px solid var(--gold);
 }
 
 .hole-result {
@@ -338,18 +310,10 @@ button {
   align-items: center;
 }
 
-.summary-row strong {
-  color: var(--green);
-}
+.summary-row strong { color: var(--green); }
 
-.history-item {
-  padding: 16px;
-  margin: 12px 0;
-}
-
-.history-item strong {
-  color: var(--green);
-}
+.history-item { padding: 16px; margin: 12px 0; }
+.history-item strong { color: var(--green); }
 
 @media (min-width: 720px) {
   .dashboard { grid-template-columns: repeat(3, 1fr); }
