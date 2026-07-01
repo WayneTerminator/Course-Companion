@@ -22,6 +22,7 @@ let course = courses[selectedCourseKey].holes;
 let playerCount = 1;
 let players = [{ name: "Wayne", scores: course.map(h => h.par) }];
 let currentHole = 0;
+let expandedScorePicker = null;
 
 const homeScreen = document.getElementById("home-screen");
 const roundScreen = document.getElementById("round-screen");
@@ -111,9 +112,14 @@ function resultLabel(score, par) {
   return "Big number";
 }
 
-function scoreOptions(par) {
-  if (par === 3) return [2, 3, 4, 5, 6];
-  return [par - 1, par, par + 1, par + 2, par + 3];
+function normalScoreOptions(par) {
+  if (par === 3) return [2, 3, 4, 5, "6+"];
+  return [par - 1, par, par + 1, par + 2, `${par + 3}+`];
+}
+
+function expandedScoreOptions(par) {
+  if (par === 3) return [6, 7, 8, 9, "10+"];
+  return [par + 3, par + 4, par + 5, par + 6, `${par + 7}+`];
 }
 
 function playerTotals(player) {
@@ -123,19 +129,24 @@ function playerTotals(player) {
   return { gross, net, stableford };
 }
 
+function isExpanded(playerIndex) {
+  return expandedScorePicker === `${playerIndex}-${currentHole}`;
+}
+
 function renderCurrentHole() {
   const hole = course[currentHole];
   document.getElementById("hole-title").textContent = `Hole ${hole.hole}`;
   document.getElementById("hole-details").textContent = `${hole.distance}m · Par ${hole.par} · SI ${hole.stroke}`;
   document.getElementById("hole-number-badge").textContent = `${hole.hole} / ${course.length}`;
 
-  const options = scoreOptions(hole.par);
-
   const scoreArea = document.getElementById("players-score-area");
   scoreArea.innerHTML = players.map((player, playerIndex) => {
     const score = player.scores[currentHole];
     const net = score - handicapStrokes(hole.stroke);
     const points = stablefordPoints(score, hole);
+    const options = isExpanded(playerIndex) ? expandedScoreOptions(hole.par) : normalScoreOptions(hole.par);
+    const helperText = isExpanded(playerIndex) ? "Select exact score" : "Tap 6+ for higher scores";
+
     return `
       <section class="hole-card">
         <div class="player-header">
@@ -143,14 +154,21 @@ function renderCurrentHole() {
           <div class="result-pill">${resultLabel(score, hole.par)}</div>
         </div>
 
+        <p class="helper">${helperText}</p>
+
         <div class="score-buttons">
-          ${options.map(option => `
-            <button 
-              class="score-button ${score === option ? "selected" : ""}" 
-              onclick="setScore(${playerIndex}, ${option})">
-              ${option === options[options.length - 1] ? option + "+" : option}
-            </button>
-          `).join("")}
+          ${options.map(option => {
+            const isPlus = String(option).includes("+");
+            const numericValue = parseInt(option, 10);
+            const selected = score === numericValue || (isExpanded(playerIndex) && isPlus && score >= numericValue);
+            return `
+              <button 
+                class="score-button ${selected ? "selected" : ""}" 
+                onclick="${isPlus ? `handlePlusScore(${playerIndex}, ${numericValue})` : `setScore(${playerIndex}, ${numericValue})`}">
+                ${option}
+              </button>
+            `;
+          }).join("")}
         </div>
 
         <div class="hole-result">
@@ -182,7 +200,25 @@ function renderLiveSummary() {
 
 function setScore(playerIndex, score) {
   players[playerIndex].scores[currentHole] = score;
+  expandedScorePicker = null;
   renderCurrentHole();
+}
+
+function handlePlusScore(playerIndex, minimumScore) {
+  if (!isExpanded(playerIndex)) {
+    expandedScorePicker = `${playerIndex}-${currentHole}`;
+    renderCurrentHole();
+    return;
+  }
+
+  const exact = prompt(`Enter exact score (${minimumScore} or higher):`, String(minimumScore));
+  const parsed = Number(exact);
+
+  if (Number.isInteger(parsed) && parsed >= minimumScore && parsed <= 20) {
+    setScore(playerIndex, parsed);
+  } else if (exact !== null) {
+    alert(`Please enter a whole number from ${minimumScore} to 20.`);
+  }
 }
 
 function startRound() {
@@ -196,6 +232,7 @@ function startRound() {
   });
 
   currentHole = 0;
+  expandedScorePicker = null;
   renderCurrentHole();
   showScreen(roundScreen);
 }
@@ -227,12 +264,14 @@ function resetScores() {
   if (!confirm("Reset all scores to par?")) return;
   players.forEach(player => player.scores = course.map(h => h.par));
   currentHole = 0;
+  expandedScorePicker = null;
   renderCurrentHole();
 }
 
 function nextHole() {
   if (currentHole < course.length - 1) {
     currentHole++;
+    expandedScorePicker = null;
     renderCurrentHole();
   } else {
     alert("That was the final hole. Tap Finish & Save Round when ready.");
@@ -242,6 +281,7 @@ function nextHole() {
 function previousHole() {
   if (currentHole > 0) {
     currentHole--;
+    expandedScorePicker = null;
     renderCurrentHole();
   }
 }
