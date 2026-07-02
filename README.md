@@ -85,3 +85,22 @@ Proper cloud history display.
 - Added gross / net / Stableford summary in round detail
 - Added hole-by-hole score display
 - Round editing intentionally held for v0.8
+
+
+# Course Companion v0.7.1
+
+App/login polish.
+
+## Changes
+- Restored visible version number on the home page
+- Kept account status as a separate pill
+- Changed login from magic link to email code login
+- Added 6-digit code entry inside Course Companion
+- Supabase sessions explicitly persist and auto-refresh
+- Added basic service worker for PWA/app-like behaviour
+- Removed real `js/config.js` from the ZIP so future updates do not overwrite Supabase settings
+- Added `js/config.example.js` as a template
+
+## Important
+When installing this ZIP over an existing local project, keep your existing `js/config.js`.
+Do not replace it with `config.example.js`.

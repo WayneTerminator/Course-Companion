@@ -939,3 +939,32 @@ button {
     grid-template-columns: repeat(9, 1fr);
   }
 }
+
+
+/* v0.7.1 app/login polish */
+.home-pills {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.account-pill {
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: white;
+  border: 1px solid var(--gold);
+}
+
+.otp-panel {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(6, 63, 43, 0.14);
+}
+
+#signin-code {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-align: center;
+}

@@ -24,7 +24,10 @@
       <section class="home-hero">
         <div class="home-topline">
           <div class="brand-mark">CC</div>
-          <div class="version-pill" id="account-status-pill">Guest Mode</div>
+          <div class="home-pills">
+            <div class="version-pill">v0.7.1</div>
+            <div class="version-pill account-pill" id="account-status-pill">Guest Mode</div>
+          </div>
         </div>
 
         <p class="eyebrow">Course Companion</p>
@@ -212,15 +215,22 @@
 
       <section class="panel" id="signin-panel">
         <p class="eyebrow">Sign In</p>
-        <h2>Email Magic Link</h2>
+        <h2>Email Code Login</h2>
         <p class="body-copy">
-          Enter your email and Course Companion will send a sign-in link. No password needed.
+          Enter your email and Course Companion will send a short code. Enter the code here to stay inside the app.
         </p>
 
         <label>Email Address</label>
         <input id="signin-email" type="email" placeholder="you@example.com" />
 
-        <button class="primary-action full-width" id="send-magic-link">Send Magic Link</button>
+        <button class="primary-action full-width" id="send-login-code">Send Login Code</button>
+
+        <div id="otp-panel" class="otp-panel" style="display:none;">
+          <label>Login Code</label>
+          <input id="signin-code" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code" />
+          <button class="primary-action full-width" id="verify-login-code">Verify Code</button>
+        </div>
+
         <p class="helper" id="signin-helper">Guest mode remains available if you do not sign in.</p>
       </section>
 
@@ -312,5 +322,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
