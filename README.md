@@ -41,3 +41,17 @@ Scoring clarity fix.
 - Added clear selected-score display on each player score card
 - This makes exact scores like 6 obvious even when the 6+ button is highlighted
 - Scoring logic unchanged
+
+
+# Course Companion v0.5.6
+
+Mobile scoring screen spacing fix.
+
+## Changes
+- Reduced vertical spacing on live scoring screen
+- Reduced hole photo height during scoring
+- Reduced score card padding slightly
+- Reduced selected-score box size slightly
+- Made Previous / Next navigation sticky near the bottom of the screen
+- Added iPhone safe-area padding for bottom navigation
+- Kept scoring logic unchanged
