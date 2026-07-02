@@ -24,7 +24,7 @@
       <section class="home-hero">
         <div class="home-topline">
           <div class="brand-mark">CC</div>
-          <div class="version-pill">Playtest v0.5.6</div>
+          <div class="version-pill" id="account-status-pill">Guest Mode</div>
         </div>
 
         <p class="eyebrow">Course Companion</p>
@@ -64,6 +64,7 @@
       </section>
 
       <button class="secondary-action full-width" id="history-button">📅 View History</button>
+      <button class="secondary-action full-width" id="account-button">👤 Account</button>
     </section>
 
     <!-- COURSE DETAIL -->
@@ -190,6 +191,61 @@
       <button class="reset-button" id="reset-round">Reset Scores</button>
     </section>
 
+
+    <!-- ACCOUNT -->
+    <section id="account-screen" class="screen">
+      <div class="top-bar">
+        <button class="small-button" id="account-back">← Home</button>
+        <div>
+          <p class="eyebrow">Account</p>
+          <h2>Course Companion Profile</h2>
+        </div>
+      </div>
+
+      <section class="panel">
+        <p class="eyebrow">Status</p>
+        <h2 id="account-status-title">Guest Mode</h2>
+        <p class="body-copy" id="account-status-message">
+          You can keep scoring as a guest. Cloud history will be available once Supabase is configured and you sign in.
+        </p>
+      </section>
+
+      <section class="panel" id="signin-panel">
+        <p class="eyebrow">Sign In</p>
+        <h2>Email Magic Link</h2>
+        <p class="body-copy">
+          Enter your email and Course Companion will send a sign-in link. No password needed.
+        </p>
+
+        <label>Email Address</label>
+        <input id="signin-email" type="email" placeholder="you@example.com" />
+
+        <button class="primary-action full-width" id="send-magic-link">Send Magic Link</button>
+        <p class="helper" id="signin-helper">Guest mode remains available if you do not sign in.</p>
+      </section>
+
+      <section class="panel" id="signedin-panel" style="display:none;">
+        <p class="eyebrow">Signed In</p>
+        <h2 id="signedin-email">Signed in</h2>
+        <p class="body-copy">
+          Rounds can be saved to your cloud account once the Supabase database table is created.
+        </p>
+
+        <button class="primary-action full-width" id="sync-local-rounds">Sync Local Rounds</button>
+        <button class="secondary-action full-width" id="sign-out-button">Sign Out</button>
+        <p class="helper" id="sync-helper"></p>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Cloud Setup</p>
+        <h2 id="cloud-config-title">Checking configuration...</h2>
+        <p class="body-copy" id="cloud-config-message">
+          Course Companion will show whether Supabase keys have been added.
+        </p>
+      </section>
+    </section>
+
+
     <!-- HISTORY -->
     <section id="history-screen" class="screen">
       <div class="top-bar">
@@ -204,6 +260,8 @@
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

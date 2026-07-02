@@ -55,3 +55,19 @@ Mobile scoring screen spacing fix.
 - Made Previous / Next navigation sticky near the bottom of the screen
 - Added iPhone safe-area padding for bottom navigation
 - Kept scoring logic unchanged
+
+
+# Course Companion v0.6.0
+
+Account foundation build.
+
+## Changes
+- Added Account screen
+- Added email magic-link sign-in UI
+- Added Supabase config file: js/config.js
+- Added Supabase schema: docs/supabase-schema.sql
+- Added setup guide: docs/supabase-setup.md
+- New rounds save locally first, then attempt cloud save when signed in
+- Local rounds can be synced after sign-in
+- Guest mode remains available
+- Scoring workflow unchanged from v0.5.6

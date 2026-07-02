@@ -24,16 +24,225 @@ let players = [{ name: "Wayne", scores: course.map(h => h.par) }];
 let currentHole = 0;
 let expandedScorePicker = null;
 
+// Account / Supabase state
+let supabaseClient = null;
+let currentUser = null;
+let cloudConfigured = false;
+let cloudAvailable = false;
+
 const homeScreen = document.getElementById("home-screen");
 const courseDetailScreen = document.getElementById("course-detail-screen");
 const setupScreen = document.getElementById("setup-screen");
 const roundScreen = document.getElementById("round-screen");
+const accountScreen = document.getElementById("account-screen");
 const historyScreen = document.getElementById("history-screen");
 
 function showScreen(screen) {
-  [homeScreen, courseDetailScreen, setupScreen, roundScreen, historyScreen].forEach(s => s.classList.remove("active"));
+  [homeScreen, courseDetailScreen, setupScreen, roundScreen, accountScreen, historyScreen].forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function localRounds() {
+  return JSON.parse(localStorage.getItem("courseCompanionRounds") || "[]");
+}
+
+function saveLocalRounds(rounds) {
+  localStorage.setItem("courseCompanionRounds", JSON.stringify(rounds));
+}
+
+function ensureLocalId(round) {
+  if (!round.localId) {
+    round.localId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+  return round;
+}
+
+function updateAccountUI(message = "") {
+  const pill = document.getElementById("account-status-pill");
+  const statusTitle = document.getElementById("account-status-title");
+  const statusMessage = document.getElementById("account-status-message");
+  const signinPanel = document.getElementById("signin-panel");
+  const signedinPanel = document.getElementById("signedin-panel");
+  const signedinEmail = document.getElementById("signedin-email");
+  const cloudConfigTitle = document.getElementById("cloud-config-title");
+  const cloudConfigMessage = document.getElementById("cloud-config-message");
+
+  if (!cloudConfigured) {
+    pill.textContent = "Guest Mode";
+    statusTitle.textContent = "Guest Mode";
+    statusMessage.textContent = "Cloud sign-in is ready in the app, but Supabase keys have not been added yet.";
+    signinPanel.style.display = "block";
+    signedinPanel.style.display = "none";
+    cloudConfigTitle.textContent = "Supabase not configured";
+    cloudConfigMessage.textContent = "Add your Supabase Project URL and anon/public key in js/config.js to activate sign-in and cloud history.";
+    document.getElementById("signin-helper").textContent = "Cloud is not configured yet. Guest scoring still works.";
+    return;
+  }
+
+  cloudConfigTitle.textContent = "Supabase configured";
+  cloudConfigMessage.textContent = "Cloud sign-in is enabled. Make sure the Supabase database schema has also been created.";
+
+  if (currentUser) {
+    pill.textContent = "Signed In";
+    statusTitle.textContent = "Signed In";
+    statusMessage.textContent = "Your account is connected. New rounds will be saved locally and also attempted in cloud history.";
+    signinPanel.style.display = "none";
+    signedinPanel.style.display = "block";
+    signedinEmail.textContent = currentUser.email || "Signed in";
+  } else {
+    pill.textContent = "Guest Mode";
+    statusTitle.textContent = "Guest Mode";
+    statusMessage.textContent = "You can continue as a guest, or sign in to start using cloud history.";
+    signinPanel.style.display = "block";
+    signedinPanel.style.display = "none";
+  }
+
+  if (message) {
+    document.getElementById("signin-helper").textContent = message;
+    document.getElementById("sync-helper").textContent = message;
+  }
+}
+
+async function initCloud() {
+  cloudConfigured = typeof window.isCourseCompanionCloudConfigured === "function" && window.isCourseCompanionCloudConfigured();
+
+  if (!cloudConfigured || !window.supabase) {
+    updateAccountUI();
+    return;
+  }
+
+  const cfg = window.COURSE_COMPANION_CONFIG;
+  supabaseClient = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+  cloudAvailable = true;
+
+  const { data } = await supabaseClient.auth.getSession();
+  currentUser = data?.session?.user || null;
+
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    currentUser = session?.user || null;
+    updateAccountUI();
+    updateHomeStats();
+    renderHistory();
+  });
+
+  updateAccountUI();
+}
+
+async function sendMagicLink() {
+  if (!cloudConfigured || !supabaseClient) {
+    updateAccountUI("Cloud is not configured yet. Add Supabase keys in js/config.js first.");
+    return;
+  }
+
+  const email = document.getElementById("signin-email").value.trim();
+  if (!email) {
+    updateAccountUI("Enter your email address first.");
+    return;
+  }
+
+  const redirectTo = window.location.origin + window.location.pathname;
+
+  const { error } = await supabaseClient.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: redirectTo }
+  });
+
+  if (error) {
+    updateAccountUI(`Sign-in error: ${error.message}`);
+    return;
+  }
+
+  updateAccountUI("Magic link sent. Check your email and open the link on this device.");
+}
+
+async function signOut() {
+  if (!supabaseClient) return;
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  updateAccountUI("Signed out. Guest scoring is still available.");
+}
+
+function roundToCloudRow(round) {
+  return {
+    local_id: round.localId,
+    user_id: currentUser.id,
+    played_at: round.date,
+    player: round.player,
+    course: round.course,
+    course_handicap: round.courseHandicap,
+    mashie_handicap: round.mashieHandicap,
+    scores: round.scores,
+    gross: round.gross,
+    net: round.net,
+    stableford: round.stableford
+  };
+}
+
+function cloudRowToRound(row) {
+  return {
+    localId: row.local_id,
+    date: row.played_at,
+    player: row.player,
+    course: row.course,
+    courseHandicap: row.course_handicap,
+    mashieHandicap: row.mashie_handicap,
+    scores: row.scores,
+    gross: row.gross,
+    net: row.net,
+    stableford: row.stableford
+  };
+}
+
+async function saveRoundToCloud(round) {
+  if (!cloudConfigured || !supabaseClient || !currentUser) return { ok: false, reason: "not signed in" };
+
+  const { error } = await supabaseClient
+    .from("rounds")
+    .upsert(roundToCloudRow(round), { onConflict: "user_id,local_id" });
+
+  if (error) return { ok: false, reason: error.message };
+  return { ok: true };
+}
+
+async function loadCloudRounds() {
+  if (!cloudConfigured || !supabaseClient || !currentUser) return null;
+
+  const { data, error } = await supabaseClient
+    .from("rounds")
+    .select("*")
+    .order("played_at", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    console.warn("Cloud history load failed:", error.message);
+    updateAccountUI(`Cloud history issue: ${error.message}`);
+    return null;
+  }
+
+  return data.map(cloudRowToRound);
+}
+
+async function syncLocalRounds() {
+  if (!cloudConfigured || !supabaseClient || !currentUser) {
+    updateAccountUI("Sign in before syncing local rounds.");
+    return;
+  }
+
+  const rounds = localRounds().map(ensureLocalId);
+  saveLocalRounds(rounds);
+
+  let synced = 0;
+  let failed = 0;
+
+  for (const round of rounds) {
+    const result = await saveRoundToCloud(round);
+    if (result.ok) synced++;
+    else failed++;
+  }
+
+  updateAccountUI(`Sync complete: ${synced} synced${failed ? `, ${failed} failed` : ""}.`);
+  renderHistory();
 }
 
 function selectCourse(key) {
@@ -257,12 +466,14 @@ function startRound() {
   showScreen(roundScreen);
 }
 
-function saveRound() {
-  const rounds = JSON.parse(localStorage.getItem("courseCompanionRounds") || "[]");
+async function saveRound() {
+  const rounds = localRounds();
+  let cloudSaved = 0;
+  let cloudFailed = 0;
 
-  players.forEach(player => {
+  for (const player of players) {
     const totals = playerTotals(player);
-    rounds.push({
+    const round = ensureLocalId({
       date: new Date().toISOString(),
       player: player.name || "Player",
       course: courses[selectedCourseKey].name,
@@ -271,12 +482,26 @@ function saveRound() {
       scores: [...player.scores],
       ...totals
     });
-  });
 
-  localStorage.setItem("courseCompanionRounds", JSON.stringify(rounds));
+    rounds.push(round);
+
+    const cloudResult = await saveRoundToCloud(round);
+    if (cloudResult.ok) cloudSaved++;
+    else if (currentUser) cloudFailed++;
+  }
+
+  saveLocalRounds(rounds);
   updateHomeStats();
-  renderHistory();
-  alert("Round saved.");
+  await renderHistory();
+
+  if (currentUser && cloudSaved) {
+    alert(`Round saved locally and to cloud.`);
+  } else if (currentUser && cloudFailed) {
+    alert(`Round saved locally. Cloud save needs setup or database check.`);
+  } else {
+    alert("Round saved locally.");
+  }
+
   showScreen(homeScreen);
 }
 
@@ -306,8 +531,14 @@ function previousHole() {
   }
 }
 
-function renderHistory() {
-  const rounds = JSON.parse(localStorage.getItem("courseCompanionRounds") || "[]").reverse();
+async function getHistoryRounds() {
+  const cloudRounds = await loadCloudRounds();
+  if (cloudRounds && cloudRounds.length) return cloudRounds;
+  return localRounds().slice().reverse();
+}
+
+async function renderHistory() {
+  const rounds = await getHistoryRounds();
   const list = document.getElementById("history-list");
 
   if (!rounds.length) {
@@ -325,8 +556,10 @@ function renderHistory() {
   `).join("");
 }
 
-function updateHomeStats() {
-  const rounds = JSON.parse(localStorage.getItem("courseCompanionRounds") || "[]");
+async function updateHomeStats() {
+  const cloudRounds = await loadCloudRounds();
+  const rounds = cloudRounds && cloudRounds.length ? cloudRounds : localRounds();
+
   document.getElementById("rounds-count").textContent = rounds.length;
 
   if (!rounds.length) {
@@ -352,6 +585,14 @@ document.getElementById("continue-to-setup").addEventListener("click", () => sho
 document.getElementById("setup-back").addEventListener("click", () => showScreen(courseDetailScreen));
 document.getElementById("start-round").addEventListener("click", startRound);
 document.getElementById("back-home").addEventListener("click", () => showScreen(homeScreen));
+document.getElementById("account-button").addEventListener("click", () => {
+  updateAccountUI();
+  showScreen(accountScreen);
+});
+document.getElementById("account-back").addEventListener("click", () => showScreen(homeScreen));
+document.getElementById("send-magic-link").addEventListener("click", sendMagicLink);
+document.getElementById("sign-out-button").addEventListener("click", signOut);
+document.getElementById("sync-local-rounds").addEventListener("click", syncLocalRounds);
 document.getElementById("history-back").addEventListener("click", () => showScreen(homeScreen));
 document.getElementById("history-button").addEventListener("click", () => {
   renderHistory();
@@ -364,5 +605,6 @@ document.getElementById("previous-hole").addEventListener("click", previousHole)
 
 setPlayerCount(1);
 renderCourseDistances();
+initCloud();
 updateHomeStats();
 renderHistory();

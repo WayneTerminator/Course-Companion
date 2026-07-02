@@ -743,3 +743,24 @@ button {
     min-height: 52px;
   }
 }
+
+
+/* v0.6.0 account foundation */
+#account-status-pill {
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  color: white;
+  border: 1px solid var(--gold);
+}
+
+#account-screen .panel h2 {
+  margin-bottom: 8px;
+}
+
+#account-screen .secondary-action {
+  margin-top: 10px;
+}
+
+#signin-helper,
+#sync-helper {
+  margin-top: 10px;
+}
