@@ -4,7 +4,7 @@
 // Step 3: NEVER paste a service_role or secret key into this file.
 
 window.COURSE_COMPANION_CONFIG = {
-  SUPABASE_URL: "https://tlqinnqxdodvkwezfxmo.supabase.co/rest/v1/",
+  SUPABASE_URL: "https://tlqinnqxdodvkwezfxmo.supabase.co",
   SUPABASE_ANON_KEY: "sb_publishable_ar7ioN--1tOxA2ZW5Nr1aw_kvq0Z8WK"
 };
 
