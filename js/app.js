@@ -36,9 +36,13 @@ const setupScreen = document.getElementById("setup-screen");
 const roundScreen = document.getElementById("round-screen");
 const accountScreen = document.getElementById("account-screen");
 const historyScreen = document.getElementById("history-screen");
+const roundDetailScreen = document.getElementById("round-detail-screen");
+
+let displayedHistoryRounds = [];
+let displayedHistorySource = "local";
 
 function showScreen(screen) {
-  [homeScreen, courseDetailScreen, setupScreen, roundScreen, accountScreen, historyScreen].forEach(s => s.classList.remove("active"));
+  [homeScreen, courseDetailScreen, setupScreen, roundScreen, accountScreen, historyScreen, roundDetailScreen].forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -531,34 +535,154 @@ function previousHole() {
   }
 }
 
-async function getHistoryRounds() {
-  const cloudRounds = await loadCloudRounds();
-  if (cloudRounds && cloudRounds.length) return cloudRounds;
-  return localRounds().slice().reverse();
+
+async function getHistoryData() {
+  const local = localRounds().slice().reverse();
+
+  if (cloudConfigured && supabaseClient && currentUser) {
+    const cloudRounds = await loadCloudRounds();
+
+    if (cloudRounds) {
+      return {
+        rounds: cloudRounds,
+        source: "cloud",
+        localCount: local.length,
+        cloudCount: cloudRounds.length
+      };
+    }
+
+    return {
+      rounds: local,
+      source: "local-fallback",
+      localCount: local.length,
+      cloudCount: null
+    };
+  }
+
+  return {
+    rounds: local,
+    source: "local",
+    localCount: local.length,
+    cloudCount: null
+  };
 }
 
-async function renderHistory() {
-  const rounds = await getHistoryRounds();
-  const list = document.getElementById("history-list");
+function setHistoryStatus(historyData) {
+  const title = document.getElementById("history-source-title");
+  const message = document.getElementById("history-source-message");
+  const eyebrow = document.getElementById("history-source-eyebrow");
 
-  if (!rounds.length) {
-    list.innerHTML = `<section class="history-item">No rounds saved yet.</section>`;
+  if (!title || !message || !eyebrow) return;
+
+  if (historyData.source === "cloud") {
+    eyebrow.textContent = "Cloud History";
+    title.textContent = currentUser?.email || "Signed in";
+    message.textContent = `${historyData.cloudCount} cloud round${historyData.cloudCount === 1 ? "" : "s"} found. Local backup rounds on this device: ${historyData.localCount}.`;
     return;
   }
 
-  list.innerHTML = rounds.map(round => `
-    <section class="history-item">
-      <strong>${round.player}</strong><br>
-      ${new Date(round.date).toLocaleDateString()} · ${round.course}<br>
-      Gross ${round.gross} · Net ${round.net} · Stableford ${round.stableford}<br>
-      <span class="helper">Scores: ${round.scores.join("-")}</span>
-    </section>
-  `).join("");
+  if (historyData.source === "local-fallback") {
+    eyebrow.textContent = "Local Backup";
+    title.textContent = "Cloud unavailable";
+    message.textContent = "Showing rounds saved on this device. Cloud history could not be loaded.";
+    return;
+  }
+
+  eyebrow.textContent = "Guest History";
+  title.textContent = "Local device history";
+  message.textContent = "Sign in from the Account screen to use cloud history across devices.";
+}
+
+async function renderHistory() {
+  const historyData = await getHistoryData();
+  displayedHistoryRounds = historyData.rounds;
+  displayedHistorySource = historyData.source;
+  setHistoryStatus(historyData);
+
+  const list = document.getElementById("history-list");
+
+  if (!displayedHistoryRounds.length) {
+    list.innerHTML = `
+      <section class="history-item empty-history">
+        <strong>No rounds saved yet.</strong><br>
+        <span class="helper">Finish and save a round to build your history.</span>
+      </section>
+    `;
+    return;
+  }
+
+  list.innerHTML = displayedHistoryRounds.map((round, index) => {
+    const dateText = new Date(round.date).toLocaleDateString(undefined, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+    const sourceLabel = displayedHistorySource === "cloud" ? "Cloud" : "Local";
+
+    return `
+      <button class="history-card" onclick="openRoundDetail(${index})">
+        <span class="history-card-top">
+          <span>
+            <strong>${round.player}</strong>
+            <em>${round.course}</em>
+          </span>
+          <span class="history-badge">${sourceLabel}</span>
+        </span>
+
+        <span class="history-date">${dateText}</span>
+
+        <span class="history-stats">
+          <span>Gross <strong>${round.gross}</strong></span>
+          <span>Net <strong>${round.net}</strong></span>
+          <span>Pts <strong>${round.stableford}</strong></span>
+        </span>
+
+        <span class="history-open">Open round →</span>
+      </button>
+    `;
+  }).join("");
+}
+
+function openRoundDetail(index) {
+  const round = displayedHistoryRounds[index];
+  if (!round) return;
+
+  const dateText = new Date(round.date).toLocaleDateString(undefined, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+
+  document.getElementById("round-detail-title").textContent = dateText;
+  document.getElementById("round-detail-player").textContent = round.player;
+  document.getElementById("round-detail-course").textContent = round.course;
+  document.getElementById("round-detail-source").textContent = displayedHistorySource === "cloud" ? "Cloud Round" : "Local Round";
+  document.getElementById("round-detail-gross").textContent = round.gross;
+  document.getElementById("round-detail-net").textContent = round.net;
+  document.getElementById("round-detail-stableford").textContent = round.stableford;
+  document.getElementById("round-detail-date").textContent = dateText;
+
+  const matchingCourse = Object.values(courses).find(c => c.name === round.course) || courses.mashie;
+
+  document.getElementById("round-detail-scores").innerHTML = round.scores.map((score, index) => {
+    const hole = matchingCourse.holes[index] || { hole: index + 1, par: 3, distance: "—", stroke: "—" };
+    const label = resultLabel(score, hole.par);
+    return `
+      <div class="round-score-cell">
+        <span>Hole ${hole.hole}</span>
+        <strong>${score}</strong>
+        <em>${label}</em>
+      </div>
+    `;
+  }).join("");
+
+  showScreen(roundDetailScreen);
 }
 
 async function updateHomeStats() {
-  const cloudRounds = await loadCloudRounds();
-  const rounds = cloudRounds && cloudRounds.length ? cloudRounds : localRounds();
+  const historyData = await getHistoryData();
+  const rounds = historyData.rounds;
 
   document.getElementById("rounds-count").textContent = rounds.length;
 
@@ -571,6 +695,7 @@ async function updateHomeStats() {
   document.getElementById("best-gross").textContent = Math.min(...rounds.map(r => r.gross));
   document.getElementById("best-stableford").textContent = Math.max(...rounds.map(r => r.stableford));
 }
+
 
 document.querySelectorAll(".course-tile").forEach(btn => {
   btn.addEventListener("click", () => selectCourse(btn.dataset.course));
@@ -594,6 +719,10 @@ document.getElementById("send-magic-link").addEventListener("click", sendMagicLi
 document.getElementById("sign-out-button").addEventListener("click", signOut);
 document.getElementById("sync-local-rounds").addEventListener("click", syncLocalRounds);
 document.getElementById("history-back").addEventListener("click", () => showScreen(homeScreen));
+document.getElementById("round-detail-back").addEventListener("click", () => {
+  renderHistory();
+  showScreen(historyScreen);
+});
 document.getElementById("history-button").addEventListener("click", () => {
   renderHistory();
   showScreen(historyScreen);

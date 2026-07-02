@@ -255,7 +255,56 @@
           <h2>History</h2>
         </div>
       </div>
+
+      <section class="panel history-status-panel">
+        <p class="eyebrow" id="history-source-eyebrow">History Source</p>
+        <h2 id="history-source-title">Loading history...</h2>
+        <p class="body-copy" id="history-source-message">Checking saved rounds.</p>
+      </section>
+
       <div id="history-list" class="history-list"></div>
+    </section>
+
+    <!-- ROUND DETAIL -->
+    <section id="round-detail-screen" class="screen">
+      <div class="top-bar">
+        <button class="small-button" id="round-detail-back">← History</button>
+        <div>
+          <p class="eyebrow">Round Detail</p>
+          <h2 id="round-detail-title">Saved Round</h2>
+        </div>
+      </div>
+
+      <section class="round-detail-hero">
+        <p class="eyebrow" id="round-detail-source">Saved Round</p>
+        <h1 id="round-detail-player">Player</h1>
+        <p id="round-detail-course">Course</p>
+      </section>
+
+      <section class="fact-grid compact-facts">
+        <div class="fact-card"><span>Gross</span><strong id="round-detail-gross">—</strong></div>
+        <div class="fact-card"><span>Net</span><strong id="round-detail-net">—</strong></div>
+        <div class="fact-card"><span>Points</span><strong id="round-detail-stableford">—</strong></div>
+        <div class="fact-card"><span>Date</span><strong id="round-detail-date">—</strong></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Scorecard</p>
+            <h2>Hole-by-hole</h2>
+          </div>
+        </div>
+        <div class="round-score-grid" id="round-detail-scores"></div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Next Step</p>
+        <h2>Editing comes in v0.8</h2>
+        <p class="body-copy">
+          This screen is read-only for now. The next build can add edit date, edit scores, and delete round.
+        </p>
+      </section>
     </section>
 
   </main>

@@ -71,3 +71,17 @@ Account foundation build.
 - Local rounds can be synced after sign-in
 - Guest mode remains available
 - Scoring workflow unchanged from v0.5.6
+
+
+# Course Companion v0.7.0
+
+Proper cloud history display.
+
+## Changes
+- Improved History screen
+- Shows whether history is coming from Cloud, Local Backup, or Guest Local History
+- Better saved-round cards
+- Tap a saved round to open a read-only detail view
+- Added gross / net / Stableford summary in round detail
+- Added hole-by-hole score display
+- Round editing intentionally held for v0.8
