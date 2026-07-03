@@ -25,7 +25,7 @@
         <div class="home-topline">
           <div class="brand-mark">CC</div>
           <div class="home-pills">
-            <div class="version-pill">v0.7.2</div>
+            <div class="version-pill">v0.8.0</div>
             <div class="version-pill account-pill" id="account-status-pill">Guest Mode</div>
           </div>
         </div>
@@ -51,11 +51,11 @@
             <span class="course-action">View Course →</span>
           </button>
 
-          <button class="course-tile disabled-course" data-course="championship">
+          <button class="course-tile active-course" data-course="championship">
             <span class="course-tile-image championship-art"></span>
             <span class="course-name">San Lameer Championship</span>
-            <span class="course-meta">Coming soon · scorecard data needed</span>
-            <span class="course-action">Coming Soon</span>
+            <span class="course-meta">18 holes · Par 72 · Stableford ready</span>
+            <span class="course-action">View Course →</span>
           </button>
         </div>
       </section>
@@ -80,7 +80,7 @@
         </div>
       </div>
 
-      <section class="course-hero mashie-art-large">
+      <section class="course-hero mashie-art-large" id="detail-hero-image">
         <div class="course-hero-overlay">
           <p class="eyebrow">Selected Course</p>
           <h1 id="detail-hero-title">San Lameer Mashie</h1>
@@ -90,22 +90,22 @@
 
       <section class="panel">
         <p class="eyebrow">About</p>
-        <h2>A quick, informal par-3 challenge</h2>
+        <h2 id="detail-about-title">A quick, informal par-3 challenge</h2>
         <p class="body-copy" id="detail-description">
           The San Lameer Mashie is a compact 9-hole par-3 course that is ideal for quick rounds, sharpening short game skills, and relaxed social golf.
         </p>
       </section>
 
       <section class="fact-grid">
-        <div class="fact-card"><span>Holes</span><strong>9</strong></div>
-        <div class="fact-card"><span>Par</span><strong>27</strong></div>
-        <div class="fact-card"><span>Longest</span><strong>134m</strong></div>
-        <div class="fact-card"><span>Shortest</span><strong>58m</strong></div>
+        <div class="fact-card"><span id="detail-fact-1-label">Holes</span><strong id="detail-fact-1-value">9</strong></div>
+        <div class="fact-card"><span id="detail-fact-2-label">Par</span><strong id="detail-fact-2-value">27</strong></div>
+        <div class="fact-card"><span id="detail-fact-3-label">Longest</span><strong id="detail-fact-3-value">134m</strong></div>
+        <div class="fact-card"><span id="detail-fact-4-label">Shortest</span><strong id="detail-fact-4-value">58m</strong></div>
       </section>
 
       <section class="panel">
         <p class="eyebrow">Useful Notes</p>
-        <div class="note-list">
+        <div class="note-list" id="detail-note-list">
           <div>Maximum group size: 4 players</div>
           <div>Players should start from Hole 1</div>
           <div>Mashie handicap: half your 18-hole course handicap</div>
@@ -149,7 +149,7 @@
 
         <label>18-hole Course Handicap</label>
         <input id="course-handicap" type="number" min="0" max="54" value="30" />
-        <p class="helper">For the Mashie, Course Companion calculates your playing handicap as half of this.</p>
+        <p class="helper" id="setup-handicap-helper">For the Mashie, Course Companion calculates your playing handicap as half of this.</p>
       </section>
 
       <button class="primary-action big-start full-width" id="start-round">⛳ Start Round</button>

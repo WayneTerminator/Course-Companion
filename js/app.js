@@ -2,7 +2,23 @@ const courses = {
   mashie: {
     name: "San Lameer Mashie",
     details: "9 holes · All par 3s · Par 27",
+    aboutTitle: "A quick, informal par-3 challenge",
     description: "The San Lameer Mashie is a compact 9-hole par-3 course that is ideal for quick rounds, sharpening short game skills, and relaxed social golf.",
+    heroClass: "mashie-art-large",
+    facts: [
+      { label: "Holes", value: "9" },
+      { label: "Par", value: "27" },
+      { label: "Longest", value: "134m" },
+      { label: "Shortest", value: "58m" }
+    ],
+    notes: [
+      "Maximum group size: 4 players",
+      "Players should start from Hole 1",
+      "Mashie handicap: half your 18-hole course handicap",
+      "No golf carts on the Mashie"
+    ],
+    handicapMode: "half",
+    handicapHelper: "For the Mashie, Course Companion calculates your playing handicap as half of this.",
     holes: [
       { hole: 1, distance: 70, par: 3, stroke: 7 },
       { hole: 2, distance: 82, par: 3, stroke: 8 },
@@ -13,6 +29,47 @@ const courses = {
       { hole: 7, distance: 104, par: 3, stroke: 2 },
       { hole: 8, distance: 58, par: 3, stroke: 9 },
       { hole: 9, distance: 78, par: 3, stroke: 6 }
+    ]
+  },
+  championship: {
+    name: "San Lameer Championship",
+    details: "18 holes · Par 72 · Club tees 5,816m",
+    aboutTitle: "A full 18-hole championship round in the conservancy",
+    description: "San Lameer's 18-hole championship course winds through glades, wetlands and forest in a wildlife-rich coastal conservancy. This playtest version loads the official par and stroke index, together with a practical club-tee distance set for live scoring.",
+    heroClass: "championship-art-large",
+    facts: [
+      { label: "Holes", value: "18" },
+      { label: "Par", value: "72" },
+      { label: "Longest", value: "478m" },
+      { label: "Shortest", value: "140m" }
+    ],
+    notes: [
+      "Designed by Peter Matkovich and Dale Hayes",
+      "Set through glades, forest and wetlands in a subtropical conservancy",
+      "Uses your full 18-hole course handicap for scoring",
+      "Club-tee distances loaded for this first Championship playtest"
+    ],
+    handicapMode: "full",
+    handicapHelper: "For the Championship course, enter your full 18-hole course handicap.",
+    holes: [
+      { hole: 1, distance: 478, par: 5, stroke: 9 },
+      { hole: 2, distance: 389, par: 4, stroke: 5 },
+      { hole: 3, distance: 358, par: 4, stroke: 13 },
+      { hole: 4, distance: 140, par: 3, stroke: 7 },
+      { hole: 5, distance: 290, par: 4, stroke: 17 },
+      { hole: 6, distance: 360, par: 4, stroke: 3 },
+      { hole: 7, distance: 400, par: 4, stroke: 1 },
+      { hole: 8, distance: 452, par: 5, stroke: 11 },
+      { hole: 9, distance: 182, par: 3, stroke: 15 },
+      { hole: 10, distance: 440, par: 5, stroke: 2 },
+      { hole: 11, distance: 281, par: 4, stroke: 8 },
+      { hole: 12, distance: 148, par: 3, stroke: 16 },
+      { hole: 13, distance: 303, par: 4, stroke: 4 },
+      { hole: 14, distance: 352, par: 4, stroke: 12 },
+      { hole: 15, distance: 280, par: 4, stroke: 18 },
+      { hole: 16, distance: 172, par: 3, stroke: 14 },
+      { hole: 17, distance: 470, par: 5, stroke: 10 },
+      { hole: 18, distance: 321, par: 4, stroke: 6 }
     ]
   }
 };
@@ -193,7 +250,7 @@ function roundToCloudRow(round) {
     player: round.player,
     course: round.course,
     course_handicap: round.courseHandicap,
-    mashie_handicap: round.mashieHandicap,
+    mashie_handicap: round.playingHandicap ?? round.mashieHandicap,
     scores: round.scores,
     gross: round.gross,
     net: round.net,
@@ -209,6 +266,7 @@ function cloudRowToRound(row) {
     course: row.course,
     courseHandicap: row.course_handicap,
     mashieHandicap: row.mashie_handicap,
+    playingHandicap: row.mashie_handicap,
     scores: row.scores,
     gross: row.gross,
     net: row.net,
@@ -268,11 +326,6 @@ async function syncLocalRounds() {
 }
 
 function selectCourse(key) {
-  if (key !== "mashie") {
-    alert("Championship course is coming soon once we add the official scorecard data.");
-    return;
-  }
-
   selectedCourseKey = key;
   const selected = courses[key];
   course = selected.holes;
@@ -281,11 +334,33 @@ function selectCourse(key) {
   document.getElementById("detail-hero-title").textContent = selected.name;
   document.getElementById("detail-hero-subtitle").textContent = selected.details;
   document.getElementById("detail-description").textContent = selected.description;
+  document.getElementById("detail-about-title").textContent = selected.aboutTitle;
   document.getElementById("setup-course-name").textContent = selected.name;
   document.getElementById("round-course-name").textContent = selected.name;
+  document.getElementById("setup-handicap-helper").textContent = selected.handicapHelper;
 
+  const hero = document.getElementById("detail-hero-image");
+  hero.classList.remove("mashie-art-large", "championship-art-large");
+  hero.classList.add(selected.heroClass);
+
+  renderCourseFacts(selected);
+  renderCourseNotes(selected);
   renderCourseDistances();
+  setPlayerCount(playerCount);
   showScreen(courseDetailScreen);
+}
+
+function renderCourseFacts(selected = courses[selectedCourseKey]) {
+  selected.facts.forEach((fact, index) => {
+    const number = index + 1;
+    document.getElementById(`detail-fact-${number}-label`).textContent = fact.label;
+    document.getElementById(`detail-fact-${number}-value`).textContent = fact.value;
+  });
+}
+
+function renderCourseNotes(selected = courses[selectedCourseKey]) {
+  const container = document.getElementById("detail-note-list");
+  container.innerHTML = selected.notes.map(note => `<div>${note}</div>`).join("");
 }
 
 function renderCourseDistances() {
@@ -323,7 +398,7 @@ function setPlayerCount(count) {
   const oldPlayers = [...players];
   players = Array.from({ length: playerCount }, (_, i) => ({
     name: oldPlayers[i]?.name || (i === 0 ? "Wayne" : `Player ${i + 1}`),
-    scores: oldPlayers[i]?.scores || course.map(h => h.par)
+    scores: oldPlayers[i]?.scores && oldPlayers[i].scores.length === course.length ? oldPlayers[i].scores : course.map(h => h.par)
   }));
 
   document.querySelectorAll(".count-button").forEach(btn => {
@@ -333,14 +408,17 @@ function setPlayerCount(count) {
   renderPlayerInputs();
 }
 
-function mashieHandicap() {
+function playingHandicap() {
   const courseHandicap = Number(document.getElementById("course-handicap").value || 0);
-  return Math.round(courseHandicap / 2);
+  return courses[selectedCourseKey].handicapMode === "half" ? Math.round(courseHandicap / 2) : courseHandicap;
 }
 
 function handicapStrokes(strokeIndex) {
-  const hcp = mashieHandicap();
-  return (hcp >= strokeIndex ? 1 : 0) + (hcp >= strokeIndex + 9 ? 1 : 0);
+  const hcp = Math.max(0, playingHandicap());
+  const holesInRound = course.length;
+  const base = Math.floor(hcp / holesInRound);
+  const remainder = hcp % holesInRound;
+  return base + (strokeIndex <= remainder ? 1 : 0);
 }
 
 function stablefordPoints(score, hole) {
@@ -500,7 +578,8 @@ async function saveRound() {
       player: player.name || "Player",
       course: courses[selectedCourseKey].name,
       courseHandicap: Number(document.getElementById("course-handicap").value || 0),
-      mashieHandicap: mashieHandicap(),
+      mashieHandicap: playingHandicap(),
+      playingHandicap: playingHandicap(),
       scores: [...player.scores],
       ...totals
     });
@@ -751,6 +830,8 @@ document.getElementById("next-hole").addEventListener("click", nextHole);
 document.getElementById("previous-hole").addEventListener("click", previousHole);
 
 setPlayerCount(1);
+renderCourseFacts();
+renderCourseNotes();
 renderCourseDistances();
 initCloud();
 updateHomeStats();

@@ -1,125 +1,28 @@
-# Course Companion v0.5.3
+# Course Companion v0.8.0
 
-Final playtest update for today.
+Adds the San Lameer Championship Course as a playable course.
 
-## Changes
-- New flow: Home → Course Detail → Round Setup → Score Round
-- Added San Lameer Mashie course detail page
-- Added course guide style hero section
-- Added quick facts and useful course notes
-- Added scorecard preview / hole distances
-- Moved players and handicap setup to its own Round Setup screen
-- Scoring workflow remains unchanged from v0.5.2
-
-## Notes
-Course facts are based on the San Lameer Mashie page:
-https://www.sanlameer.co.za/golf/mashie-course/
-
-Photos are represented by CSS placeholders for now. Real photos can be added once we have suitable images and permission to use them.
-
-
-# Course Companion v0.5.4
-
-Image test build.
-
-## Changes
-- Added user's own Mashie photo as the course tile image
-- Added user's own Mashie photo as the course detail hero image
-- Kept v0.5.3 flow and scoring unchanged
-
-## Notes
-The uploaded image was converted into web-friendly JPG assets:
-- assets/mashie-hero.jpg
-- assets/mashie-tile.jpg
-
-
-# Course Companion v0.5.5
-
-Scoring clarity fix.
-
-## Changes
-- Added clear selected-score display on each player score card
-- This makes exact scores like 6 obvious even when the 6+ button is highlighted
-- Scoring logic unchanged
-
-
-# Course Companion v0.5.6
-
-Mobile scoring screen spacing fix.
-
-## Changes
-- Reduced vertical spacing on live scoring screen
-- Reduced hole photo height during scoring
-- Reduced score card padding slightly
-- Reduced selected-score box size slightly
-- Made Previous / Next navigation sticky near the bottom of the screen
-- Added iPhone safe-area padding for bottom navigation
-- Kept scoring logic unchanged
-
-
-# Course Companion v0.6.0
-
-Account foundation build.
-
-## Changes
-- Added Account screen
-- Added email magic-link sign-in UI
-- Added Supabase config file: js/config.js
-- Added Supabase schema: docs/supabase-schema.sql
-- Added setup guide: docs/supabase-setup.md
-- New rounds save locally first, then attempt cloud save when signed in
-- Local rounds can be synced after sign-in
-- Guest mode remains available
-- Scoring workflow unchanged from v0.5.6
-
-
-# Course Companion v0.7.0
-
-Proper cloud history display.
-
-## Changes
-- Improved History screen
-- Shows whether history is coming from Cloud, Local Backup, or Guest Local History
-- Better saved-round cards
-- Tap a saved round to open a read-only detail view
-- Added gross / net / Stableford summary in round detail
-- Added hole-by-hole score display
-- Round editing intentionally held for v0.8
-
-
-# Course Companion v0.7.1
-
-App/login polish.
-
-## Changes
-- Restored visible version number on the home page
-- Kept account status as a separate pill
-- Changed login from magic link to email code login
-- Added 6-digit code entry inside Course Companion
-- Supabase sessions explicitly persist and auto-refresh
-- Added basic service worker for PWA/app-like behaviour
-- Removed real `js/config.js` from the ZIP so future updates do not overwrite Supabase settings
-- Added `js/config.example.js` as a template
+## What is new
+- San Lameer Championship course tile is now active
+- Championship course detail page uses Wayne's uploaded course photo
+- Championship course includes 18 holes, par values, stroke indexes, and a practical club-tee distance set for scoring
+- Course detail page content now changes dynamically per selected course
+- Handicap logic now changes by course:
+  - Mashie = half of 18-hole course handicap
+  - Championship = full 18-hole course handicap
+- Service worker cache updated for the new assets
 
 ## Important
-When installing this ZIP over an existing local project, keep your existing `js/config.js`.
-Do not replace it with `config.example.js`.
+- `js/config.js` is still intentionally not included in this ZIP
+- Keep your existing `js/config.js` file when copying this update into your repo/workspace
 
+## Install
+Copy these folders/files into your local Course-Companion project and replace existing files when asked:
+- `index.html`
+- `css/style.css`
+- `js/app.js`
+- `service-worker.js`
+- `assets/championship-hero.jpg`
+- `assets/championship-tile.jpg`
 
-# Course Companion v0.7.2
-
-Link login fix.
-
-## Changes
-- Switched login back from email code to email sign-in link
-- Uses fixed GitHub Pages redirect URL: https://wayneterminator.github.io/Course-Companion/
-- Keeps visible version number on home page
-- Keeps Supabase session persistence and auto refresh
-- Removes code-entry UI for now
-- Keeps `js/config.js` out of the ZIP so your Supabase settings are not overwritten
-- Updated service worker cache name to v0.7.2
-
-## Supabase setting required
-In Supabase → Authentication → URL Configuration, make sure this URL is allowed:
-
-https://wayneterminator.github.io/Course-Companion/
+Do not replace or delete `js/config.js`.

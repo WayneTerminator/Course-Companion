@@ -236,8 +236,18 @@ h2 {
 
 .championship-art {
   background:
-    linear-gradient(to top, rgba(6, 63, 43, 0.88), rgba(6, 63, 43, 0.12)),
-    linear-gradient(135deg, #d7b46a, #366b45 55%, #062b1e);
+    linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.10)),
+    url("../assets/championship-tile.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.championship-art-large {
+  background:
+    linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.06)),
+    url("../assets/championship-hero.jpg");
+  background-size: cover;
+  background-position: center;
 }
 
 .course-hero {
