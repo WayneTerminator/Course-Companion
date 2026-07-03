@@ -97,7 +97,7 @@ function updateAccountUI(message = "") {
   } else {
     pill.textContent = "Guest Mode";
     statusTitle.textContent = "Guest Mode";
-    statusMessage.textContent = "You can continue as a guest, or sign in with an email code to use cloud history." ;
+    statusMessage.textContent = "You can continue as a guest, or sign in with an email link to use cloud history.";
     signinPanel.style.display = "block";
     signedinPanel.style.display = "none";
   }
@@ -129,17 +129,26 @@ async function initCloud() {
   const { data } = await supabaseClient.auth.getSession();
   currentUser = data?.session?.user || null;
 
+  if (currentUser && (window.location.hash || window.location.search)) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     currentUser = session?.user || null;
-    updateAccountUI();
+
+    if (currentUser && (window.location.hash || window.location.search)) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    updateAccountUI(currentUser ? "Signed in successfully." : undefined);
     updateHomeStats();
     renderHistory();
   });
 
-  updateAccountUI();
+  updateAccountUI(currentUser ? "Signed in successfully." : undefined);
 }
 
-async function sendLoginCode() {
+async function sendSignInLink() {
   if (!cloudConfigured || !supabaseClient) {
     updateAccountUI("Cloud is not configured yet. Add Supabase keys in js/config.js first.");
     return;
@@ -151,9 +160,14 @@ async function sendLoginCode() {
     return;
   }
 
+  const redirectTo = "https://wayneterminator.github.io/Course-Companion/";
+
   const { error } = await supabaseClient.auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: true }
+    options: {
+      emailRedirectTo: redirectTo,
+      shouldCreateUser: true
+    }
   });
 
   if (error) {
@@ -161,44 +175,7 @@ async function sendLoginCode() {
     return;
   }
 
-  const otpPanel = document.getElementById("otp-panel");
-  if (otpPanel) otpPanel.style.display = "block";
-
-  updateAccountUI("Login code sent. Check your email, then enter the code here.");
-}
-
-async function verifyLoginCode() {
-  if (!cloudConfigured || !supabaseClient) {
-    updateAccountUI("Cloud is not configured yet.");
-    return;
-  }
-
-  const email = document.getElementById("signin-email").value.trim();
-  const token = document.getElementById("signin-code").value.trim();
-
-  if (!email || !token) {
-    updateAccountUI("Enter your email and login code first.");
-    return;
-  }
-
-  const { data, error } = await supabaseClient.auth.verifyOtp({
-    email,
-    token,
-    type: "email"
-  });
-
-  if (error) {
-    updateAccountUI(`Code verification failed: ${error.message}`);
-    return;
-  }
-
-  currentUser = data?.user || null;
-  const otpPanel = document.getElementById("otp-panel");
-  if (otpPanel) otpPanel.style.display = "none";
-
-  updateAccountUI("Signed in successfully.");
-  updateHomeStats();
-  renderHistory();
+  updateAccountUI("Sign-in link sent. Open the email link on this phone. It should return you to Course Companion.");
 }
 
 async function signOut() {
@@ -756,8 +733,7 @@ document.getElementById("account-button").addEventListener("click", () => {
   showScreen(accountScreen);
 });
 document.getElementById("account-back").addEventListener("click", () => showScreen(homeScreen));
-document.getElementById("send-login-code").addEventListener("click", sendLoginCode);
-document.getElementById("verify-login-code").addEventListener("click", verifyLoginCode);
+document.getElementById("send-signin-link").addEventListener("click", sendSignInLink);
 document.getElementById("sign-out-button").addEventListener("click", signOut);
 document.getElementById("sync-local-rounds").addEventListener("click", syncLocalRounds);
 document.getElementById("history-back").addEventListener("click", () => showScreen(homeScreen));

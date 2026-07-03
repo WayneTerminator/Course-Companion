@@ -25,7 +25,7 @@
         <div class="home-topline">
           <div class="brand-mark">CC</div>
           <div class="home-pills">
-            <div class="version-pill">v0.7.1</div>
+            <div class="version-pill">v0.7.2</div>
             <div class="version-pill account-pill" id="account-status-pill">Guest Mode</div>
           </div>
         </div>
@@ -215,22 +215,15 @@
 
       <section class="panel" id="signin-panel">
         <p class="eyebrow">Sign In</p>
-        <h2>Email Code Login</h2>
+        <h2>Email Sign-In Link</h2>
         <p class="body-copy">
-          Enter your email and Course Companion will send a short code. Enter the code here to stay inside the app.
+          Enter your email and Course Companion will send a secure sign-in link. Open the link on this phone to sign in.
         </p>
 
         <label>Email Address</label>
         <input id="signin-email" type="email" placeholder="you@example.com" />
 
-        <button class="primary-action full-width" id="send-login-code">Send Login Code</button>
-
-        <div id="otp-panel" class="otp-panel" style="display:none;">
-          <label>Login Code</label>
-          <input id="signin-code" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code" />
-          <button class="primary-action full-width" id="verify-login-code">Verify Code</button>
-        </div>
-
+        <button class="primary-action full-width" id="send-signin-link">Send Sign-In Link</button>
         <p class="helper" id="signin-helper">Guest mode remains available if you do not sign in.</p>
       </section>
 

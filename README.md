@@ -104,3 +104,22 @@ App/login polish.
 ## Important
 When installing this ZIP over an existing local project, keep your existing `js/config.js`.
 Do not replace it with `config.example.js`.
+
+
+# Course Companion v0.7.2
+
+Link login fix.
+
+## Changes
+- Switched login back from email code to email sign-in link
+- Uses fixed GitHub Pages redirect URL: https://wayneterminator.github.io/Course-Companion/
+- Keeps visible version number on home page
+- Keeps Supabase session persistence and auto refresh
+- Removes code-entry UI for now
+- Keeps `js/config.js` out of the ZIP so your Supabase settings are not overwritten
+- Updated service worker cache name to v0.7.2
+
+## Supabase setting required
+In Supabase → Authentication → URL Configuration, make sure this URL is allowed:
+
+https://wayneterminator.github.io/Course-Companion/
