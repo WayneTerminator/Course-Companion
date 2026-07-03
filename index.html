@@ -25,7 +25,7 @@
         <div class="home-topline">
           <div class="brand-mark">CC</div>
           <div class="home-pills">
-            <div class="version-pill">v0.8.0</div>
+            <div class="version-pill">v0.8.1</div>
             <div class="version-pill account-pill" id="account-status-pill">Guest Mode</div>
           </div>
         </div>
@@ -265,6 +265,8 @@
         <p class="body-copy" id="history-source-message">Checking saved rounds.</p>
       </section>
 
+      <button class="primary-action full-width" id="add-previous-round">＋ Add Previous Round</button>
+
       <div id="history-list" class="history-list"></div>
     </section>
 
@@ -301,13 +303,63 @@
         <div class="round-score-grid" id="round-detail-scores"></div>
       </section>
 
-      <section class="panel">
-        <p class="eyebrow">Next Step</p>
-        <h2>Editing comes in v0.8</h2>
+      <section class="panel round-actions-panel">
+        <p class="eyebrow">Round Actions</p>
+        <h2>Edit this round</h2>
         <p class="body-copy">
-          This screen is read-only for now. The next build can add edit date, edit scores, and delete round.
+          Update the date, handicap, player name or hole scores. Changes will save locally and to cloud when signed in.
         </p>
+        <button class="primary-action full-width" id="edit-round-button">Edit Round</button>
+        <button class="danger-action full-width" id="delete-round-button">Delete Round</button>
       </section>
+    </section>
+
+    <!-- ROUND EDIT -->
+    <section id="round-edit-screen" class="screen">
+      <div class="top-bar">
+        <button class="small-button" id="round-edit-cancel">← Cancel</button>
+        <div>
+          <p class="eyebrow" id="round-edit-eyebrow">Edit Round</p>
+          <h2 id="round-edit-title">Round Details</h2>
+        </div>
+      </div>
+
+      <section class="panel">
+        <p class="eyebrow">Round Info</p>
+        <h2 id="round-edit-panel-title">Edit saved round</h2>
+
+        <label>Course</label>
+        <select id="edit-course"></select>
+
+        <label>Date Played</label>
+        <input id="edit-date" type="date" />
+
+        <label>Player Name</label>
+        <input id="edit-player" type="text" placeholder="Player" />
+
+        <label>18-hole Course Handicap</label>
+        <input id="edit-handicap" type="number" min="0" max="54" value="30" />
+        <p class="helper" id="edit-handicap-helper">Enter the course handicap used for this round.</p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Scores</p>
+            <h2>Hole-by-hole scores</h2>
+          </div>
+        </div>
+        <div class="edit-score-grid" id="edit-score-inputs"></div>
+      </section>
+
+      <section class="fact-grid compact-facts">
+        <div class="fact-card"><span>Gross</span><strong id="edit-summary-gross">—</strong></div>
+        <div class="fact-card"><span>Net</span><strong id="edit-summary-net">—</strong></div>
+        <div class="fact-card"><span>Points</span><strong id="edit-summary-stableford">—</strong></div>
+        <div class="fact-card"><span>Playing HCP</span><strong id="edit-summary-playing-hcp">—</strong></div>
+      </section>
+
+      <button class="primary-action big-start full-width" id="save-edited-round">Save Round</button>
     </section>
 
   </main>
