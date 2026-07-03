@@ -15,3 +15,4 @@ Editable history and manual previous-round entry.
 
 ## Important
 `js/config.js` is not included in this ZIP. Keep your existing Supabase config file.
+Deployment retry - GitHub Pages
