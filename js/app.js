@@ -94,12 +94,16 @@ const roundScreen = document.getElementById("round-screen");
 const accountScreen = document.getElementById("account-screen");
 const historyScreen = document.getElementById("history-screen");
 const roundDetailScreen = document.getElementById("round-detail-screen");
+const roundEditScreen = document.getElementById("round-edit-screen");
 
 let displayedHistoryRounds = [];
 let displayedHistorySource = "local";
+let selectedDetailRound = null;
+let editMode = "edit";
+let editingRoundOriginal = null;
 
 function showScreen(screen) {
-  [homeScreen, courseDetailScreen, setupScreen, roundScreen, accountScreen, historyScreen, roundDetailScreen].forEach(s => s.classList.remove("active"));
+  [homeScreen, courseDetailScreen, setupScreen, roundScreen, accountScreen, historyScreen, roundDetailScreen, roundEditScreen].forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -280,6 +284,19 @@ async function saveRoundToCloud(round) {
   const { error } = await supabaseClient
     .from("rounds")
     .upsert(roundToCloudRow(round), { onConflict: "user_id,local_id" });
+
+  if (error) return { ok: false, reason: error.message };
+  return { ok: true };
+}
+
+async function deleteRoundFromCloud(localId) {
+  if (!cloudConfigured || !supabaseClient || !currentUser || !localId) return { ok: false, reason: "not signed in" };
+
+  const { error } = await supabaseClient
+    .from("rounds")
+    .delete()
+    .eq("user_id", currentUser.id)
+    .eq("local_id", localId);
 
   if (error) return { ok: false, reason: error.message };
   return { ok: true };
@@ -745,6 +762,8 @@ function openRoundDetail(index) {
   const round = displayedHistoryRounds[index];
   if (!round) return;
 
+  selectedDetailRound = round;
+
   const dateText = new Date(round.date).toLocaleDateString(undefined, {
     day: "2-digit",
     month: "short",
@@ -775,6 +794,200 @@ function openRoundDetail(index) {
   }).join("");
 
   showScreen(roundDetailScreen);
+}
+
+
+function courseKeyFromName(courseName) {
+  return Object.keys(courses).find(key => courses[key].name === courseName) || selectedCourseKey || "mashie";
+}
+
+function hcpForCourse(courseKey, courseHandicap) {
+  const selected = courses[courseKey] || courses.mashie;
+  const hcp = Number(courseHandicap || 0);
+  return selected.handicapMode === "half" ? Math.round(hcp / 2) : hcp;
+}
+
+function strokesForCourse(courseKey, courseHandicap, strokeIndex) {
+  const selected = courses[courseKey] || courses.mashie;
+  const hcp = Math.max(0, hcpForCourse(courseKey, courseHandicap));
+  const holesInRound = selected.holes.length;
+  const base = Math.floor(hcp / holesInRound);
+  const remainder = hcp % holesInRound;
+  return base + (strokeIndex <= remainder ? 1 : 0);
+}
+
+function totalsForScores(courseKey, courseHandicap, scores) {
+  const selected = courses[courseKey] || courses.mashie;
+  const gross = scores.reduce((a, b) => a + b, 0);
+  const net = scores.reduce((total, score, index) => {
+    const hole = selected.holes[index];
+    return total + score - strokesForCourse(courseKey, courseHandicap, hole.stroke);
+  }, 0);
+  const stableford = scores.reduce((total, score, index) => {
+    const hole = selected.holes[index];
+    const netScore = score - strokesForCourse(courseKey, courseHandicap, hole.stroke);
+    return total + Math.max(0, 2 + hole.par - netScore);
+  }, 0);
+
+  return { gross, net, stableford };
+}
+
+function dateForInput(dateValue) {
+  if (!dateValue) return new Date().toISOString().slice(0, 10);
+  const parsed = new Date(dateValue);
+  if (Number.isNaN(parsed.getTime())) return new Date().toISOString().slice(0, 10);
+  return parsed.toISOString().slice(0, 10);
+}
+
+function dateFromInput(dateValue) {
+  const value = dateValue || new Date().toISOString().slice(0, 10);
+  return new Date(`${value}T12:00:00`).toISOString();
+}
+
+function ensureEditCourseOptions() {
+  const select = document.getElementById("edit-course");
+  select.innerHTML = Object.keys(courses).map(key => `<option value="${key}">${courses[key].name}</option>`).join("");
+}
+
+function scoresFromEditInputs() {
+  const courseKey = document.getElementById("edit-course").value;
+  const selected = courses[courseKey] || courses.mashie;
+  return selected.holes.map((hole, index) => {
+    const input = document.querySelector(`.edit-score-input[data-hole-index="${index}"]`);
+    const value = Number(input?.value || hole.par);
+    return Number.isInteger(value) && value > 0 ? value : hole.par;
+  });
+}
+
+function renderEditScoreInputs(courseKey, scores = null) {
+  const selected = courses[courseKey] || courses.mashie;
+  const container = document.getElementById("edit-score-inputs");
+  const scoreValues = scores && scores.length === selected.holes.length ? scores : selected.holes.map(h => h.par);
+
+  container.innerHTML = selected.holes.map((hole, index) => `
+    <div class="edit-score-row">
+      <div>
+        <strong>Hole ${hole.hole}</strong>
+        <span>${hole.distance}m · Par ${hole.par} · SI ${hole.stroke}</span>
+      </div>
+      <input class="edit-score-input" data-hole-index="${index}" type="number" min="1" max="20" value="${scoreValues[index]}" />
+    </div>
+  `).join("");
+
+  document.querySelectorAll(".edit-score-input").forEach(input => {
+    input.addEventListener("input", updateEditSummary);
+  });
+
+  updateEditSummary();
+}
+
+function updateEditSummary() {
+  const courseKey = document.getElementById("edit-course").value || selectedCourseKey;
+  const courseHandicap = Number(document.getElementById("edit-handicap").value || 0);
+  const scores = scoresFromEditInputs();
+  const totals = totalsForScores(courseKey, courseHandicap, scores);
+
+  document.getElementById("edit-summary-gross").textContent = totals.gross;
+  document.getElementById("edit-summary-net").textContent = totals.net;
+  document.getElementById("edit-summary-stableford").textContent = totals.stableford;
+  document.getElementById("edit-summary-playing-hcp").textContent = hcpForCourse(courseKey, courseHandicap);
+}
+
+function openRoundEditor(round = null, mode = "edit") {
+  editMode = mode;
+  editingRoundOriginal = round;
+  ensureEditCourseOptions();
+
+  const courseKey = round ? courseKeyFromName(round.course) : selectedCourseKey;
+  const selected = courses[courseKey] || courses.mashie;
+
+  document.getElementById("round-edit-eyebrow").textContent = mode === "add" ? "Add Round" : "Edit Round";
+  document.getElementById("round-edit-title").textContent = mode === "add" ? "Add Previous Round" : "Edit Saved Round";
+  document.getElementById("round-edit-panel-title").textContent = mode === "add" ? "Enter previous round" : "Edit saved round";
+  document.getElementById("edit-course").value = courseKey;
+  document.getElementById("edit-date").value = dateForInput(round?.date);
+  document.getElementById("edit-player").value = round?.player || "Wayne";
+  document.getElementById("edit-handicap").value = round?.courseHandicap ?? document.getElementById("course-handicap").value ?? 30;
+  document.getElementById("edit-handicap-helper").textContent = selected.handicapHelper;
+
+  renderEditScoreInputs(courseKey, round?.scores);
+  showScreen(roundEditScreen);
+}
+
+function makeRoundFromEditor() {
+  const courseKey = document.getElementById("edit-course").value || "mashie";
+  const selected = courses[courseKey] || courses.mashie;
+  const courseHandicap = Number(document.getElementById("edit-handicap").value || 0);
+  const scores = scoresFromEditInputs();
+  const totals = totalsForScores(courseKey, courseHandicap, scores);
+
+  return ensureLocalId({
+    localId: editingRoundOriginal?.localId,
+    date: dateFromInput(document.getElementById("edit-date").value),
+    player: document.getElementById("edit-player").value.trim() || "Player",
+    course: selected.name,
+    courseKey,
+    courseHandicap,
+    mashieHandicap: hcpForCourse(courseKey, courseHandicap),
+    playingHandicap: hcpForCourse(courseKey, courseHandicap),
+    scores,
+    ...totals
+  });
+}
+
+function upsertLocalRound(round) {
+  const rounds = localRounds().map(ensureLocalId);
+  const index = rounds.findIndex(saved => saved.localId === round.localId);
+
+  if (index >= 0) rounds[index] = round;
+  else rounds.push(round);
+
+  saveLocalRounds(rounds);
+}
+
+async function saveEditedRound() {
+  const updatedRound = makeRoundFromEditor();
+  upsertLocalRound(updatedRound);
+
+  let cloudMessage = "";
+  if (currentUser) {
+    const result = await saveRoundToCloud(updatedRound);
+    cloudMessage = result.ok ? " Saved to cloud." : ` Cloud save failed: ${result.reason}`;
+  }
+
+  selectedDetailRound = updatedRound;
+  await renderHistory();
+  updateHomeStats();
+  alert(`${editMode === "add" ? "Round added" : "Round updated"}.${cloudMessage}`);
+  showScreen(historyScreen);
+}
+
+async function deleteSelectedRound() {
+  if (!selectedDetailRound) return;
+  if (!confirm("Delete this round from your history?")) return;
+
+  const localId = selectedDetailRound.localId;
+  const remaining = localRounds().map(ensureLocalId).filter(round => round.localId !== localId);
+  saveLocalRounds(remaining);
+
+  let cloudMessage = "";
+  if (currentUser && localId) {
+    const result = await deleteRoundFromCloud(localId);
+    cloudMessage = result.ok ? " Deleted from cloud." : ` Cloud delete failed: ${result.reason}`;
+  }
+
+  selectedDetailRound = null;
+  await renderHistory();
+  updateHomeStats();
+  alert(`Round deleted.${cloudMessage}`);
+  showScreen(historyScreen);
+}
+
+function handleEditCourseChange() {
+  const courseKey = document.getElementById("edit-course").value;
+  const selected = courses[courseKey] || courses.mashie;
+  document.getElementById("edit-handicap-helper").textContent = selected.handicapHelper;
+  renderEditScoreInputs(courseKey);
 }
 
 async function updateHomeStats() {
@@ -824,6 +1037,16 @@ document.getElementById("history-button").addEventListener("click", () => {
   renderHistory();
   showScreen(historyScreen);
 });
+document.getElementById("add-previous-round").addEventListener("click", () => openRoundEditor(null, "add"));
+document.getElementById("edit-round-button").addEventListener("click", () => openRoundEditor(selectedDetailRound, "edit"));
+document.getElementById("delete-round-button").addEventListener("click", deleteSelectedRound);
+document.getElementById("round-edit-cancel").addEventListener("click", () => {
+  if (selectedDetailRound) showScreen(roundDetailScreen);
+  else showScreen(historyScreen);
+});
+document.getElementById("save-edited-round").addEventListener("click", saveEditedRound);
+document.getElementById("edit-course").addEventListener("change", handleEditCourseChange);
+document.getElementById("edit-handicap").addEventListener("input", updateEditSummary);
 document.getElementById("finish-round").addEventListener("click", saveRound);
 document.getElementById("reset-round").addEventListener("click", resetScores);
 document.getElementById("next-hole").addEventListener("click", nextHole);
