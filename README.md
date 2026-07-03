@@ -1,19 +1,23 @@
-# Course Companion v0.8.5
+# Course Companion v0.8.6
 
-Per-player handicap fix.
+Fixes the v0.8.5 setup-screen bug and keeps per-player handicaps.
 
-## What is new
-- Each player now has their own handicap in Round Setup
-- Stableford and net scoring now calculate separately per player
+## What is fixed
+- Handicap fields now appear under each player in Round Setup
+- Start Round button works again
+- Each player has their own handicap
+- Net and Stableford scoring calculate separately per player
 - Saved rounds store each player's own handicap
-- Multi-player rounds now work properly for Wayne + Elma or any 2-4 player group
-- Add/Edit Previous Round remains available
-- San Lameer Mashie, San Lameer Championship, Kokstad and Margate remain included
+- Service worker changed to network-first to reduce old-version cache problems
+
+## Still included
+- San Lameer Mashie
+- San Lameer Championship
+- Kokstad Golf Club
+- Margate Country Club
+- Add Previous Round
+- Edit saved rounds
 
 ## Important
 - `js/config.js` is intentionally not included in this ZIP
 - Keep your existing `js/config.js` when copying this update into your local project
-
-## Install
-Copy the update into your local Course-Companion folder and replace existing files.
-Do not replace or delete `js/config.js`.

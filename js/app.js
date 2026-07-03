@@ -164,7 +164,7 @@ const courses = {
 let selectedCourseKey = "mashie";
 let course = courses[selectedCourseKey].holes;
 let playerCount = 1;
-let players = [{ name: "Wayne", scores: course.map(h => h.par) }];
+let players = [{ name: "Wayne", handicap: 30, scores: course.map(h => h.par) }];
 let currentHole = 0;
 let expandedScorePicker = null;
 
@@ -441,7 +441,7 @@ function selectCourse(key) {
   document.getElementById("detail-about-title").textContent = selected.aboutTitle;
   document.getElementById("setup-course-name").textContent = selected.name;
   document.getElementById("round-course-name").textContent = selected.name;
-  document.getElementById("setup-handicap-helper").textContent = selected.handicapHelper;
+  document.getElementById("setup-handicap-helper").textContent = setupHandicapHelpText(selected);
 
   const hero = document.getElementById("detail-hero-image");
   hero.classList.remove("mashie-art-large", "championship-art-large", "kokstad-art-large", "margate-art-large");
@@ -477,22 +477,51 @@ function renderCourseDistances() {
   `).join("");
 }
 
+function setupHandicapHelpText(selected = courses[selectedCourseKey]) {
+  return selected.handicapMode === "half"
+    ? "Enter each player's full 18-hole course handicap. Course Companion will halve it for this course."
+    : "Enter each player's full 18-hole course handicap for this course.";
+}
+
 function renderPlayerInputs() {
   const container = document.getElementById("player-inputs");
   container.innerHTML = "";
+
   for (let i = 0; i < playerCount; i++) {
     const defaultName = i === 0 ? "Wayne" : `Player ${i + 1}`;
+    const handicap = players[i]?.handicap ?? 30;
+
     container.innerHTML += `
-      <label>Player ${i + 1}</label>
-      <input class="player-name-input" value="${players[i]?.name || defaultName}" data-player="${i}" />
+      <section class="player-setup-card">
+        <label>Player ${i + 1} Name</label>
+        <input class="player-name-input" value="${players[i]?.name || defaultName}" data-player="${i}" />
+
+        <label>Player ${i + 1} Handicap</label>
+        <input class="player-handicap-input" type="number" min="0" max="54" value="${handicap}" data-player="${i}" />
+        <p class="helper player-hcp-helper" id="player-hcp-helper-${i}">
+          Playing handicap: ${playingHandicapForValue(handicap)}
+        </p>
+      </section>
     `;
   }
 
   document.querySelectorAll(".player-name-input").forEach(input => {
     input.addEventListener("input", () => {
       const index = Number(input.dataset.player);
-      if (!players[index]) players[index] = { name: input.value, scores: course.map(h => h.par) };
+      if (!players[index]) players[index] = { name: input.value, handicap: 30, scores: course.map(h => h.par) };
       players[index].name = input.value || `Player ${index + 1}`;
+    });
+  });
+
+  document.querySelectorAll(".player-handicap-input").forEach(input => {
+    input.addEventListener("input", () => {
+      const index = Number(input.dataset.player);
+      const value = Math.max(0, Math.min(54, Number(input.value || 0)));
+      if (!players[index]) players[index] = { name: `Player ${index + 1}`, handicap: value, scores: course.map(h => h.par) };
+      players[index].handicap = value;
+
+      const helper = document.getElementById(`player-hcp-helper-${index}`);
+      if (helper) helper.textContent = `Playing handicap: ${playingHandicapForValue(value)}`;
     });
   });
 }
@@ -502,6 +531,7 @@ function setPlayerCount(count) {
   const oldPlayers = [...players];
   players = Array.from({ length: playerCount }, (_, i) => ({
     name: oldPlayers[i]?.name || (i === 0 ? "Wayne" : `Player ${i + 1}`),
+    handicap: oldPlayers[i]?.handicap ?? 30,
     scores: oldPlayers[i]?.scores && oldPlayers[i].scores.length === course.length ? oldPlayers[i].scores : course.map(h => h.par)
   }));
 
@@ -512,21 +542,26 @@ function setPlayerCount(count) {
   renderPlayerInputs();
 }
 
-function playingHandicap() {
-  const courseHandicap = Number(document.getElementById("course-handicap").value || 0);
-  return courses[selectedCourseKey].handicapMode === "half" ? Math.round(courseHandicap / 2) : courseHandicap;
+function playingHandicapForValue(courseHandicap) {
+  const selected = courses[selectedCourseKey] || courses.mashie;
+  const hcp = Number(courseHandicap || 0);
+  return selected.handicapMode === "half" ? Math.round(hcp / 2) : hcp;
 }
 
-function handicapStrokes(strokeIndex) {
-  const hcp = Math.max(0, playingHandicap());
+function playingHandicap(playerIndex = 0) {
+  return playingHandicapForValue(players[playerIndex]?.handicap ?? 0);
+}
+
+function handicapStrokes(strokeIndex, playerIndex = 0) {
+  const hcp = Math.max(0, playingHandicap(playerIndex));
   const holesInRound = course.length;
   const base = Math.floor(hcp / holesInRound);
   const remainder = hcp % holesInRound;
   return base + (strokeIndex <= remainder ? 1 : 0);
 }
 
-function stablefordPoints(score, hole) {
-  const net = score - handicapStrokes(hole.stroke);
+function stablefordPoints(score, hole, playerIndex = 0) {
+  const net = score - handicapStrokes(hole.stroke, playerIndex);
   return Math.max(0, 2 + hole.par - net);
 }
 
@@ -549,10 +584,10 @@ function expandedScoreOptions(par) {
   return [par + 3, par + 4, par + 5, par + 6, `${par + 7}+`];
 }
 
-function playerTotals(player) {
+function playerTotals(player, playerIndex = 0) {
   const gross = player.scores.reduce((a, b) => a + b, 0);
-  const net = player.scores.reduce((total, score, index) => total + score - handicapStrokes(course[index].stroke), 0);
-  const stableford = player.scores.reduce((total, score, index) => total + stablefordPoints(score, course[index]), 0);
+  const net = player.scores.reduce((total, score, index) => total + score - handicapStrokes(course[index].stroke, playerIndex), 0);
+  const stableford = player.scores.reduce((total, score, index) => total + stablefordPoints(score, course[index], playerIndex), 0);
   return { gross, net, stableford };
 }
 
@@ -573,8 +608,8 @@ function renderCurrentHole() {
   const scoreArea = document.getElementById("players-score-area");
   scoreArea.innerHTML = players.map((player, playerIndex) => {
     const score = player.scores[currentHole];
-    const net = score - handicapStrokes(hole.stroke);
-    const points = stablefordPoints(score, hole);
+    const net = score - handicapStrokes(hole.stroke, playerIndex);
+    const points = stablefordPoints(score, hole, playerIndex);
     const options = isExpanded(playerIndex) ? expandedScoreOptions(hole.par) : normalScoreOptions(hole.par);
     const helperText = isExpanded(playerIndex) ? "Select exact score" : "Tap 6+ for higher scores";
 
@@ -583,6 +618,7 @@ function renderCurrentHole() {
         <div class="player-header">
           <div>
             <div class="player-name">${player.name}</div>
+            <p class="helper mini-helper">HCP ${player.handicap ?? 0} · Playing ${playingHandicap(playerIndex)}</p>
             <div class="result-pill result-inline">${resultLabel(score, hole.par)}</div>
           </div>
           <div class="selected-score-display">
@@ -609,7 +645,7 @@ function renderCurrentHole() {
         </div>
 
         <div class="hole-result">
-          <span>HCP strokes: ${handicapStrokes(hole.stroke)}</span>
+          <span>HCP strokes: ${handicapStrokes(hole.stroke, playerIndex)}</span>
           <span>Net: ${net}</span>
           <span>Stableford: ${points}</span>
         </div>
@@ -622,8 +658,8 @@ function renderCurrentHole() {
 
 function renderLiveSummary() {
   const summary = document.getElementById("live-summary");
-  summary.innerHTML = players.map(player => {
-    const totals = playerTotals(player);
+  summary.innerHTML = players.map((player, playerIndex) => {
+    const totals = playerTotals(player, playerIndex);
     return `
       <div class="summary-row">
         <strong>${player.name}</strong>
@@ -664,6 +700,11 @@ function startRound() {
     players[index].name = input.value || `Player ${index + 1}`;
   });
 
+  document.querySelectorAll(".player-handicap-input").forEach(input => {
+    const index = Number(input.dataset.player);
+    players[index].handicap = Math.max(0, Math.min(54, Number(input.value || 0)));
+  });
+
   players.forEach(player => {
     player.scores = course.map(h => h.par);
   });
@@ -679,15 +720,16 @@ async function saveRound() {
   let cloudSaved = 0;
   let cloudFailed = 0;
 
-  for (const player of players) {
-    const totals = playerTotals(player);
+  for (const [playerIndex, player] of players.entries()) {
+    const totals = playerTotals(player, playerIndex);
     const round = ensureLocalId({
       date: new Date().toISOString(),
       player: player.name || "Player",
       course: courses[selectedCourseKey].name,
-      courseHandicap: Number(document.getElementById("course-handicap").value || 0),
-      mashieHandicap: playingHandicap(),
-      playingHandicap: playingHandicap(),
+      courseKey: selectedCourseKey,
+      courseHandicap: Number(player.handicap ?? 0),
+      mashieHandicap: playingHandicap(playerIndex),
+      playingHandicap: playingHandicap(playerIndex),
       scores: [...player.scores],
       ...totals
     });
@@ -998,7 +1040,7 @@ function openRoundEditor(round = null, mode = "edit") {
   document.getElementById("edit-course").value = courseKey;
   document.getElementById("edit-date").value = dateForInput(round?.date);
   document.getElementById("edit-player").value = round?.player || "Wayne";
-  document.getElementById("edit-handicap").value = round?.courseHandicap ?? document.getElementById("course-handicap").value ?? 30;
+  document.getElementById("edit-handicap").value = round?.courseHandicap ?? players[0]?.handicap ?? 30;
   document.getElementById("edit-handicap-helper").textContent = selected.handicapHelper;
 
   renderEditScoreInputs(courseKey, round?.scores);
@@ -1147,6 +1189,7 @@ setPlayerCount(1);
 renderCourseFacts();
 renderCourseNotes();
 renderCourseDistances();
+document.getElementById("setup-handicap-helper").textContent = setupHandicapHelpText();
 initCloud();
 updateHomeStats();
 renderHistory();

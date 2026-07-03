@@ -1,4 +1,4 @@
-const CACHE_NAME = "course-companion-v0-8-5";
+const CACHE_NAME = "course-companion-v0-8-6";
 
 const CORE_ASSETS = [
   "./",
@@ -37,17 +37,16 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
 
-  if (url.pathname.endsWith("/js/config.js")) {
-    return;
-  }
-
-  if (event.request.method !== "GET") {
-    return;
-  }
+  if (url.pathname.endsWith("/js/config.js")) return;
+  if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request).catch(() => cached);
-    })
+    fetch(event.request)
+      .then(response => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy)).catch(() => null);
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
