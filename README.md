@@ -1,17 +1,19 @@
-# Course Companion v0.8.3
+# Course Companion v0.8.4
 
-Adds Kokstad Golf Club as a playable course.
+Adds Margate Country Club and fixes Kokstad as a fully playable course.
 
 ## What is new
-- Added Kokstad Golf Club course tile and detail screen
-- Uses Wayne's uploaded Kokstad photo for the course tile and hero image
-- Added Hole19 blue-tee scorecard data:
+- Added Margate Country Club as a playable course
+- Added Margate photo tile and hero image
+- Loaded Margate blue-tee scorecard data:
   - 18 holes
-  - Par 72
-  - 5,918 yards
+  - Par 71
+  - 5,011m
   - Hole-by-hole par, distance and stroke index
-- Updated distance display so Kokstad shows yards while San Lameer courses still show metres
-- Keeps v0.8.2 editable history and add previous round features
+- Added short Margate hole strategy notes during live scoring
+- Added/fixed Kokstad Golf Club as a fully playable course in app data
+- Keeps San Lameer Mashie and San Lameer Championship
+- Keeps editable history and Add Previous Round
 
 ## Important
 - `js/config.js` is intentionally not included in this ZIP
@@ -25,5 +27,7 @@ Copy these files/folders into your local Course-Companion folder and replace exi
 - `service-worker.js`
 - `assets/kokstad-hero.jpg`
 - `assets/kokstad-tile.jpg`
+- `assets/margate-hero.jpg`
+- `assets/margate-tile.jpg`
 
 Do not replace or delete `js/config.js`.

@@ -1,4 +1,4 @@
-const CACHE_NAME = "course-companion-v0-8-3";
+const CACHE_NAME = "course-companion-v0-8-4";
 
 const CORE_ASSETS = [
   "./",
@@ -11,7 +11,9 @@ const CORE_ASSETS = [
   "./assets/championship-hero.jpg",
   "./assets/championship-tile.jpg",
   "./assets/kokstad-hero.jpg",
-  "./assets/kokstad-tile.jpg"
+  "./assets/kokstad-tile.jpg",
+  "./assets/margate-hero.jpg",
+  "./assets/margate-tile.jpg"
 ];
 
 // Do not cache config.js. It contains local project-specific Supabase settings.

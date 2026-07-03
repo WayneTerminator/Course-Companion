@@ -5,6 +5,7 @@ const courses = {
     aboutTitle: "A quick, informal par-3 challenge",
     description: "The San Lameer Mashie is a compact 9-hole par-3 course that is ideal for quick rounds, sharpening short game skills, and relaxed social golf.",
     heroClass: "mashie-art-large",
+    distanceUnit: "m",
     facts: [
       { label: "Holes", value: "9" },
       { label: "Par", value: "27" },
@@ -37,6 +38,7 @@ const courses = {
     aboutTitle: "A full 18-hole championship round in the conservancy",
     description: "San Lameer's 18-hole championship course winds through glades, wetlands and forest in a wildlife-rich coastal conservancy. This playtest version loads the official par and stroke index, together with a practical club-tee distance set for live scoring.",
     heroClass: "championship-art-large",
+    distanceUnit: "m",
     facts: [
       { label: "Holes", value: "18" },
       { label: "Par", value: "72" },
@@ -71,8 +73,93 @@ const courses = {
       { hole: 17, distance: 470, par: 5, stroke: 10 },
       { hole: 18, distance: 321, par: 4, stroke: 6 }
     ]
+  },
+  kokstad: {
+    name: "Kokstad Golf Club",
+    details: "18 holes · Par 72 · Blue tees 5,918yds",
+    aboutTitle: "A scenic 18-hole course in Kokstad",
+    description: "Kokstad Golf Club is an 18-hole KwaZulu-Natal course with scenic fairways, practice facilities and a welcoming clubhouse. This version uses the Hole19 blue-tee scorecard for live scoring.",
+    heroClass: "kokstad-art-large",
+    distanceUnit: "yds",
+    facts: [
+      { label: "Holes", value: "18" },
+      { label: "Par", value: "72" },
+      { label: "Total", value: "5,918yds" },
+      { label: "Longest", value: "482yds" }
+    ],
+    notes: [
+      "Blue tees loaded from Hole19",
+      "Uses your full 18-hole course handicap for scoring",
+      "Distances are shown in yards",
+      "Good course to refine later with your own notes after play"
+    ],
+    handicapMode: "full",
+    handicapHelper: "For Kokstad, enter your full 18-hole course handicap.",
+    holes: [
+      { hole: 1, distance: 429, par: 5, stroke: 17 },
+      { hole: 2, distance: 375, par: 4, stroke: 9 },
+      { hole: 3, distance: 372, par: 4, stroke: 1 },
+      { hole: 4, distance: 382, par: 4, stroke: 3 },
+      { hole: 5, distance: 466, par: 5, stroke: 15 },
+      { hole: 6, distance: 340, par: 4, stroke: 7 },
+      { hole: 7, distance: 161, par: 3, stroke: 11 },
+      { hole: 8, distance: 331, par: 4, stroke: 5 },
+      { hole: 9, distance: 177, par: 3, stroke: 13 },
+      { hole: 10, distance: 458, par: 5, stroke: 14 },
+      { hole: 11, distance: 338, par: 4, stroke: 10 },
+      { hole: 12, distance: 168, par: 3, stroke: 8 },
+      { hole: 13, distance: 317, par: 4, stroke: 6 },
+      { hole: 14, distance: 482, par: 5, stroke: 12 },
+      { hole: 15, distance: 271, par: 4, stroke: 18 },
+      { hole: 16, distance: 141, par: 3, stroke: 16 },
+      { hole: 17, distance: 350, par: 4, stroke: 4 },
+      { hole: 18, distance: 360, par: 4, stroke: 2 }
+    ]
+  },
+  margate: {
+    name: "Margate Country Club",
+    details: "18 holes · Par 71 · Blue tees 5,011m",
+    aboutTitle: "A user-friendly but strategic coastal course",
+    description: "Margate Country Club is described by the club as a picturesque, user-friendly course that is forgiving for newer golfers but still challenging in places. This version uses the club's blue-tee scorecard and adds short hole strategy notes from the course guide.",
+    heroClass: "margate-art-large",
+    distanceUnit: "m",
+    facts: [
+      { label: "Holes", value: "18" },
+      { label: "Par", value: "71" },
+      { label: "Total", value: "5,011m" },
+      { label: "Longest", value: "408m" }
+    ],
+    notes: [
+      "Blue tees loaded from the club scorecard",
+      "Men's blue rating listed as CR 66.7 / Slope 120",
+      "Uses your full 18-hole course handicap for scoring",
+      "Hole notes included for live scoring strategy"
+    ],
+    handicapMode: "full",
+    handicapHelper: "For Margate Country Club, enter your full 18-hole course handicap.",
+    holes: [
+      { hole: 1, distance: 305, par: 4, stroke: 3, note: "Demanding opener. Place the drive and avoid OB/penalty trouble left. Do not fly the green." },
+      { hole: 2, distance: 120, par: 3, stroke: 7, note: "Par 3 with danger around the green. OB left, water right, bunkers around a two-tier green." },
+      { hole: 3, distance: 330, par: 4, stroke: 5, note: "Longer slight dogleg right. Avoid right fairway bunkers and the penalty area left." },
+      { hole: 4, distance: 126, par: 3, stroke: 13, note: "Short hole over water from elevation. Wind can make this play much longer." },
+      { hole: 5, distance: 385, par: 5, stroke: 15, note: "Gradual uphill par 5. Avoid OB right and trees left; manage the second shot carefully." },
+      { hole: 6, distance: 315, par: 4, stroke: 1, note: "Stroke 1 par 4. Favour the right side as the fairway slopes right-to-left." },
+      { hole: 7, distance: 276, par: 4, stroke: 17, note: "Short dogleg left. Watch the fairway bunkers; a bump-and-run approach can work." },
+      { hole: 8, distance: 149, par: 3, stroke: 11, note: "If missing the green, left is safer. Right brings trees and bunker trouble." },
+      { hole: 9, distance: 386, par: 5, stroke: 9, note: "Drive is key. Water left, later OB left, and a fairway bunker right on the second." },
+      { hole: 10, distance: 327, par: 4, stroke: 6, note: "Place the drive. Avoid OB/bunker right and water left; favour right on approach." },
+      { hole: 11, distance: 94, par: 3, stroke: 8, note: "Signature par 3. Better long than short; water short and below the green." },
+      { hole: 12, distance: 291, par: 4, stroke: 18, note: "Short dogleg right. Downhill slope feeds right where trees and OB wait." },
+      { hole: 13, distance: 269, par: 4, stroke: 16, note: "Stay on the fairway. OB and bunker right; clear the grass bunker short of the green." },
+      { hole: 14, distance: 324, par: 4, stroke: 4, note: "Downhill fairway with trees either side. Avoid overshooting the green." },
+      { hole: 15, distance: 401, par: 5, stroke: 10, note: "Lay-up position matters. Do not miss the green left over the long greenside bunker." },
+      { hole: 16, distance: 137, par: 3, stroke: 14, note: "Water left can matter in a southerly. Try to leave the ball below the hole." },
+      { hole: 17, distance: 368, par: 4, stroke: 2, note: "Long dogleg right. Favour left from the tee and avoid running through the green." },
+      { hole: 18, distance: 408, par: 5, stroke: 12, note: "Accurate tee shot needed. Water right/diagonal before an uphill finish to a two-tier green." }
+    ]
   }
 };
+
 
 let selectedCourseKey = "mashie";
 let course = courses[selectedCourseKey].holes;
@@ -357,7 +444,7 @@ function selectCourse(key) {
   document.getElementById("setup-handicap-helper").textContent = selected.handicapHelper;
 
   const hero = document.getElementById("detail-hero-image");
-  hero.classList.remove("mashie-art-large", "championship-art-large");
+  hero.classList.remove("mashie-art-large", "championship-art-large", "kokstad-art-large", "margate-art-large");
   hero.classList.add(selected.heroClass);
 
   renderCourseFacts(selected);
@@ -478,6 +565,10 @@ function renderCurrentHole() {
   document.getElementById("hole-title").textContent = `Hole ${hole.hole}`;
   document.getElementById("hole-details").textContent = `${hole.distance}${courses[selectedCourseKey].distanceUnit || "m"} · Par ${hole.par} · SI ${hole.stroke}`;
   document.getElementById("hole-number-badge").textContent = `${hole.hole} / ${course.length}`;
+  const holeNote = document.getElementById("hole-strategy-note");
+  if (holeNote) {
+    holeNote.textContent = hole.note || "Score first. We can add detailed notes for this hole later.";
+  }
 
   const scoreArea = document.getElementById("players-score-area");
   scoreArea.innerHTML = players.map((player, playerIndex) => {

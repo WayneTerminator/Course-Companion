@@ -1052,7 +1052,7 @@ button {
 }
 
 
-/* v0.8.3 Kokstad Golf Club */
+/* v0.8.4 additional course images */
 .kokstad-art {
   background:
     linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.10)),
@@ -1067,4 +1067,25 @@ button {
     url("../assets/kokstad-hero.jpg");
   background-size: cover;
   background-position: center;
+}
+
+.margate-art {
+  background:
+    linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.10)),
+    url("../assets/margate-tile.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.margate-art-large {
+  background:
+    linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.06)),
+    url("../assets/margate-hero.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+#hole-strategy-note {
+  margin-top: 8px;
+  line-height: 1.35;
 }
