@@ -385,7 +385,7 @@ function renderCourseDistances() {
   container.innerHTML = course.map(hole => `
     <div class="hole-distance">
       <span>Hole ${hole.hole}</span>
-      <strong>${hole.distance}m</strong>
+      <strong>${hole.distance}${courses[selectedCourseKey].distanceUnit || "m"}</strong>
     </div>
   `).join("");
 }
@@ -476,7 +476,7 @@ function isExpanded(playerIndex) {
 function renderCurrentHole() {
   const hole = course[currentHole];
   document.getElementById("hole-title").textContent = `Hole ${hole.hole}`;
-  document.getElementById("hole-details").textContent = `${hole.distance}m · Par ${hole.par} · SI ${hole.stroke}`;
+  document.getElementById("hole-details").textContent = `${hole.distance}${courses[selectedCourseKey].distanceUnit || "m"} · Par ${hole.par} · SI ${hole.stroke}`;
   document.getElementById("hole-number-badge").textContent = `${hole.hole} / ${course.length}`;
 
   const scoreArea = document.getElementById("players-score-area");
@@ -868,7 +868,7 @@ function renderEditScoreInputs(courseKey, scores = null) {
     <div class="edit-score-row">
       <div>
         <strong>Hole ${hole.hole}</strong>
-        <span>${hole.distance}m · Par ${hole.par} · SI ${hole.stroke}</span>
+        <span>${hole.distance}${selected.distanceUnit || "m"} · Par ${hole.par} · SI ${hole.stroke}</span>
       </div>
       <input class="edit-score-input" data-hole-index="${index}" type="number" min="1" max="20" value="${scoreValues[index]}" />
     </div>

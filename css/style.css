@@ -1050,3 +1050,21 @@ button {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+
+/* v0.8.3 Kokstad Golf Club */
+.kokstad-art {
+  background:
+    linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.10)),
+    url("../assets/kokstad-tile.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.kokstad-art-large {
+  background:
+    linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.06)),
+    url("../assets/kokstad-hero.jpg");
+  background-size: cover;
+  background-position: center;
+}
