@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Course Companion</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=0.8.7" />
 
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
@@ -25,7 +25,7 @@
         <div class="home-topline">
           <div class="brand-mark">CC</div>
           <div class="home-pills">
-            <div class="version-pill">v0.8.6</div>
+            <div class="version-pill">v0.8.7</div>
             <div class="version-pill account-pill" id="account-status-pill">Guest Mode</div>
           </div>
         </div>
@@ -33,6 +33,18 @@
         <p class="eyebrow">Course Companion</p>
         <h1>Choose your course.</h1>
         <p class="tagline">Fast, simple scoring. Built around the course you are playing today.</p>
+      </section>
+
+      <section class="resume-card" id="resume-round-card" style="display: none;">
+        <div>
+          <p class="eyebrow">Unfinished Round</p>
+          <h2 id="resume-round-title">Round in progress</h2>
+          <p class="helper" id="resume-round-meta">Saved on this device.</p>
+        </div>
+        <div class="resume-actions">
+          <button class="primary-action" id="resume-round-button">Resume Round</button>
+          <button class="small-button" id="discard-round-button">Discard</button>
+        </div>
       </section>
 
       <section class="panel">
@@ -378,8 +390,8 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/config.js?v=0.8.7"></script>
+  <script src="js/app.js?v=0.8.7"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

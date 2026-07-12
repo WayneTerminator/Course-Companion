@@ -1,10 +1,6 @@
-const CACHE_NAME = "course-companion-v0-8-6";
+const CACHE_NAME = "course-companion-v0-8-7";
 
 const CORE_ASSETS = [
-  "./",
-  "./index.html",
-  "./css/style.css",
-  "./js/app.js",
   "./manifest.json",
   "./assets/mashie-hero.jpg",
   "./assets/mashie-tile.jpg",

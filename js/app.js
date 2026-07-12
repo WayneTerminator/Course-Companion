@@ -167,6 +167,9 @@ let playerCount = 1;
 let players = [{ name: "Wayne", handicap: 30, scores: course.map(h => h.par) }];
 let currentHole = 0;
 let expandedScorePicker = null;
+let activeRoundInProgress = false;
+let activeRoundStartedAt = null;
+const ACTIVE_ROUND_KEY = "courseCompanionActiveRound";
 
 // Account / Supabase state
 let supabaseClient = null;
@@ -192,6 +195,7 @@ let editingRoundOriginal = null;
 function showScreen(screen) {
   [homeScreen, courseDetailScreen, setupScreen, roundScreen, accountScreen, historyScreen, roundDetailScreen, roundEditScreen].forEach(s => s.classList.remove("active"));
   screen.classList.add("active");
+  if (screen === homeScreen) renderResumeRoundCard();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -201,6 +205,124 @@ function localRounds() {
 
 function saveLocalRounds(rounds) {
   localStorage.setItem("courseCompanionRounds", JSON.stringify(rounds));
+}
+
+function cleanAuthUrlIfNeeded() {
+  const params = new URLSearchParams(window.location.search || "");
+  const hash = window.location.hash || "";
+  const hasAuthSearch = params.has("code") || params.has("access_token") || params.has("refresh_token") || params.has("type");
+  const hasAuthHash = hash.includes("access_token") || hash.includes("refresh_token") || hash.includes("type=");
+  if (!hasAuthSearch && !hasAuthHash) return;
+  const keep = new URLSearchParams();
+  if (params.has("v")) keep.set("v", params.get("v"));
+  const newUrl = `${window.location.pathname}${keep.toString() ? `?${keep.toString()}` : ""}`;
+  window.history.replaceState({}, document.title, newUrl);
+}
+
+function getActiveRoundDraft() {
+  try {
+    const draft = JSON.parse(localStorage.getItem(ACTIVE_ROUND_KEY) || "null");
+    if (!draft || !draft.selectedCourseKey || !Array.isArray(draft.players)) return null;
+    if (!courses[draft.selectedCourseKey]) return null;
+    return draft;
+  } catch (_error) {
+    return null;
+  }
+}
+
+function normalizeRoundPlayers(draftPlayers, selectedCourse) {
+  const holes = selectedCourse.holes;
+  return draftPlayers.map((player, index) => ({
+    name: player?.name || (index === 0 ? "Wayne" : `Player ${index + 1}`),
+    handicap: Number(player?.handicap ?? 30),
+    scores: Array.isArray(player?.scores) && player.scores.length === holes.length ? player.scores.map((score, holeIndex) => Number(score || holes[holeIndex].par)) : holes.map(h => h.par),
+    entered: Array.isArray(player?.entered) && player.entered.length === holes.length ? player.entered.map(Boolean) : holes.map(() => false)
+  }));
+}
+
+function activeRoundPayload() {
+  return {
+    selectedCourseKey,
+    currentHole,
+    playerCount,
+    startedAt: activeRoundStartedAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    players: players.map(player => ({
+      name: player.name,
+      handicap: player.handicap,
+      scores: [...player.scores],
+      entered: Array.isArray(player.entered) ? [...player.entered] : course.map(() => false)
+    }))
+  };
+}
+
+function saveActiveRoundDraft() {
+  if (!activeRoundInProgress) return;
+  localStorage.setItem(ACTIVE_ROUND_KEY, JSON.stringify(activeRoundPayload()));
+  renderResumeRoundCard();
+}
+
+function clearActiveRoundDraft() {
+  activeRoundInProgress = false;
+  activeRoundStartedAt = null;
+  localStorage.removeItem(ACTIVE_ROUND_KEY);
+  renderResumeRoundCard();
+}
+
+function scoredHoleCount(player) {
+  if (!Array.isArray(player.entered)) return 0;
+  return player.entered.filter(Boolean).length;
+}
+
+function applyCourseContext(key) {
+  selectedCourseKey = key;
+  const selected = courses[selectedCourseKey] || courses.mashie;
+  course = selected.holes;
+  document.getElementById("setup-course-name").textContent = selected.name;
+  document.getElementById("round-course-name").textContent = selected.name;
+  document.getElementById("setup-handicap-helper").textContent = setupHandicapHelpText(selected);
+}
+
+function renderResumeRoundCard() {
+  const card = document.getElementById("resume-round-card");
+  if (!card) return;
+  const draft = getActiveRoundDraft();
+  if (!draft) {
+    card.style.display = "none";
+    return;
+  }
+  const selected = courses[draft.selectedCourseKey] || courses.mashie;
+  const firstPlayer = draft.players[0] || {};
+  const entered = Array.isArray(firstPlayer.entered) ? firstPlayer.entered.filter(Boolean).length : 0;
+  const updated = draft.updatedAt ? new Date(draft.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "recently";
+  document.getElementById("resume-round-title").textContent = `${selected.name} · Hole ${(draft.currentHole || 0) + 1}`;
+  document.getElementById("resume-round-meta").textContent = `${draft.players.length} player${draft.players.length === 1 ? "" : "s"} · ${entered}/${selected.holes.length} holes scored · saved ${updated}`;
+  card.style.display = "block";
+}
+
+function resumeActiveRound() {
+  const draft = getActiveRoundDraft();
+  if (!draft) return;
+  const selected = courses[draft.selectedCourseKey] || courses.mashie;
+  applyCourseContext(draft.selectedCourseKey);
+  playerCount = Math.max(1, Math.min(4, Number(draft.playerCount || draft.players.length || 1)));
+  players = normalizeRoundPlayers(draft.players.slice(0, playerCount), selected);
+  currentHole = Math.max(0, Math.min(selected.holes.length - 1, Number(draft.currentHole || 0)));
+  activeRoundStartedAt = draft.startedAt || new Date().toISOString();
+  activeRoundInProgress = true;
+  expandedScorePicker = null;
+  document.querySelectorAll(".count-button").forEach(btn => {
+    btn.classList.toggle("active", Number(btn.dataset.count) === playerCount);
+  });
+  renderPlayerInputs();
+  renderCurrentHole();
+  showScreen(roundScreen);
+  saveActiveRoundDraft();
+}
+
+function discardActiveRound() {
+  if (!confirm("Discard the unfinished round saved on this device?")) return;
+  clearActiveRoundDraft();
 }
 
 function ensureLocalId(round) {
@@ -277,16 +399,12 @@ async function initCloud() {
   const { data } = await supabaseClient.auth.getSession();
   currentUser = data?.session?.user || null;
 
-  if (currentUser && (window.location.hash || window.location.search)) {
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
+  if (currentUser) cleanAuthUrlIfNeeded();
 
   supabaseClient.auth.onAuthStateChange((_event, session) => {
     currentUser = session?.user || null;
 
-    if (currentUser && (window.location.hash || window.location.search)) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    if (currentUser) cleanAuthUrlIfNeeded();
 
     updateAccountUI(currentUser ? "Signed in successfully." : undefined);
     updateHomeStats();
@@ -508,7 +626,7 @@ function renderPlayerInputs() {
   document.querySelectorAll(".player-name-input").forEach(input => {
     input.addEventListener("input", () => {
       const index = Number(input.dataset.player);
-      if (!players[index]) players[index] = { name: input.value, handicap: 30, scores: course.map(h => h.par) };
+      if (!players[index]) players[index] = { name: input.value, handicap: 30, scores: course.map(h => h.par), entered: course.map(() => false) };
       players[index].name = input.value || `Player ${index + 1}`;
     });
   });
@@ -517,7 +635,7 @@ function renderPlayerInputs() {
     input.addEventListener("input", () => {
       const index = Number(input.dataset.player);
       const value = Math.max(0, Math.min(54, Number(input.value || 0)));
-      if (!players[index]) players[index] = { name: `Player ${index + 1}`, handicap: value, scores: course.map(h => h.par) };
+      if (!players[index]) players[index] = { name: `Player ${index + 1}`, handicap: value, scores: course.map(h => h.par), entered: course.map(() => false) };
       players[index].handicap = value;
 
       const helper = document.getElementById(`player-hcp-helper-${index}`);
@@ -656,16 +774,41 @@ function renderCurrentHole() {
   renderLiveSummary();
 }
 
+function runningSegmentTotals(player, playerIndex, start, end) {
+  let gross = 0;
+  let net = 0;
+  let stableford = 0;
+  let holes = 0;
+  for (let index = start; index < Math.min(end, course.length); index++) {
+    if (!player.entered?.[index]) continue;
+    const score = Number(player.scores[index] || course[index].par);
+    gross += score;
+    net += score - handicapStrokes(course[index].stroke, playerIndex);
+    stableford += stablefordPoints(score, course[index], playerIndex);
+    holes++;
+  }
+  return { gross, net, stableford, holes };
+}
+
+function scoreTotalLabel(total) {
+  return total.holes ? total.gross : "—";
+}
+
 function renderLiveSummary() {
   const summary = document.getElementById("live-summary");
+  const hasBackNine = course.length > 9;
   summary.innerHTML = players.map((player, playerIndex) => {
-    const totals = playerTotals(player, playerIndex);
+    const front = runningSegmentTotals(player, playerIndex, 0, Math.min(9, course.length));
+    const back = runningSegmentTotals(player, playerIndex, 9, course.length);
+    const total = runningSegmentTotals(player, playerIndex, 0, course.length);
     return `
-      <div class="summary-row">
+      <div class="summary-row live-total-card">
         <strong>${player.name}</strong>
-        <span>Gross ${totals.gross}</span>
-        <span>Net ${totals.net}</span>
-        <span>${totals.stableford} pts</span>
+        <span>Thru ${total.holes}</span>
+        <span>Front ${scoreTotalLabel(front)}</span>
+        ${hasBackNine ? `<span>Back ${scoreTotalLabel(back)}</span>` : ""}
+        <span>Total ${scoreTotalLabel(total)}</span>
+        <span>${total.stableford} pts</span>
       </div>
     `;
   }).join("");
@@ -673,8 +816,11 @@ function renderLiveSummary() {
 
 function setScore(playerIndex, score) {
   players[playerIndex].scores[currentHole] = score;
+  if (!Array.isArray(players[playerIndex].entered)) players[playerIndex].entered = course.map(() => false);
+  players[playerIndex].entered[currentHole] = true;
   expandedScorePicker = null;
   renderCurrentHole();
+  saveActiveRoundDraft();
 }
 
 function handlePlusScore(playerIndex, minimumScore) {
@@ -707,15 +853,25 @@ function startRound() {
 
   players.forEach(player => {
     player.scores = course.map(h => h.par);
+    player.entered = course.map(() => false);
   });
 
   currentHole = 0;
   expandedScorePicker = null;
+  activeRoundStartedAt = new Date().toISOString();
+  activeRoundInProgress = true;
   renderCurrentHole();
   showScreen(roundScreen);
+  saveActiveRoundDraft();
 }
 
 async function saveRound() {
+  const unentered = players.reduce((total, player) => total + course.length - scoredHoleCount(player), 0);
+  if (unentered > 0) {
+    const proceed = confirm(`${unentered} player-hole score${unentered === 1 ? "" : "s"} not entered yet. Save anyway? Unentered holes will be saved as par.`);
+    if (!proceed) return;
+  }
+
   const rounds = localRounds();
   let cloudSaved = 0;
   let cloudFailed = 0;
@@ -753,15 +909,27 @@ async function saveRound() {
     alert("Round saved locally.");
   }
 
+  clearActiveRoundDraft();
   showScreen(homeScreen);
 }
 
 function resetScores() {
   if (!confirm("Reset all scores to par?")) return;
-  players.forEach(player => player.scores = course.map(h => h.par));
+  players.forEach(player => {
+    player.scores = course.map(h => h.par);
+    player.entered = course.map(() => false);
+  });
   currentHole = 0;
   expandedScorePicker = null;
   renderCurrentHole();
+  saveActiveRoundDraft();
+}
+
+function flashHoleChange() {
+  roundScreen.classList.remove("hole-advance-flash");
+  void roundScreen.offsetWidth;
+  roundScreen.classList.add("hole-advance-flash");
+  setTimeout(() => roundScreen.classList.remove("hole-advance-flash"), 550);
 }
 
 function nextHole() {
@@ -769,6 +937,8 @@ function nextHole() {
     currentHole++;
     expandedScorePicker = null;
     renderCurrentHole();
+    flashHoleChange();
+    saveActiveRoundDraft();
   } else {
     alert("That was the final hole. Tap Finish & Save Round when ready.");
   }
@@ -779,6 +949,8 @@ function previousHole() {
     currentHole--;
     expandedScorePicker = null;
     renderCurrentHole();
+    flashHoleChange();
+    saveActiveRoundDraft();
   }
 }
 
@@ -1140,6 +1312,14 @@ async function updateHomeStats() {
 }
 
 
+document.getElementById("resume-round-button").addEventListener("click", resumeActiveRound);
+document.getElementById("discard-round-button").addEventListener("click", discardActiveRound);
+
+window.addEventListener("pagehide", saveActiveRoundDraft);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") saveActiveRoundDraft();
+});
+
 document.querySelectorAll(".course-tile").forEach(btn => {
   btn.addEventListener("click", () => selectCourse(btn.dataset.course));
 });
@@ -1152,7 +1332,10 @@ document.getElementById("course-detail-back").addEventListener("click", () => sh
 document.getElementById("continue-to-setup").addEventListener("click", () => showScreen(setupScreen));
 document.getElementById("setup-back").addEventListener("click", () => showScreen(courseDetailScreen));
 document.getElementById("start-round").addEventListener("click", startRound);
-document.getElementById("back-home").addEventListener("click", () => showScreen(homeScreen));
+document.getElementById("back-home").addEventListener("click", () => {
+  saveActiveRoundDraft();
+  showScreen(homeScreen);
+});
 document.getElementById("account-button").addEventListener("click", () => {
   updateAccountUI();
   showScreen(accountScreen);
@@ -1190,6 +1373,7 @@ renderCourseFacts();
 renderCourseNotes();
 renderCourseDistances();
 document.getElementById("setup-handicap-helper").textContent = setupHandicapHelpText();
+renderResumeRoundCard();
 initCloud();
 updateHomeStats();
 renderHistory();

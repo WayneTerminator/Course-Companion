@@ -1,23 +1,15 @@
-# Course Companion v0.8.6
+# Course Companion v0.8.7
 
-Fixes the v0.8.5 setup-screen bug and keeps per-player handicaps.
+Play-test fixes.
 
-## What is fixed
-- Handicap fields now appear under each player in Round Setup
-- Start Round button works again
-- Each player has their own handicap
-- Net and Stableford scoring calculate separately per player
-- Saved rounds store each player's own handicap
-- Service worker changed to network-first to reduce old-version cache problems
-
-## Still included
-- San Lameer Mashie
-- San Lameer Championship
-- Kokstad Golf Club
-- Margate Country Club
-- Add Previous Round
-- Edit saved rounds
+## What changed
+- Active rounds now auto-save locally after every score change
+- If the app is closed, refreshed, or interrupted, an unfinished round can be resumed from the home screen
+- Live scoring summary now shows running stroke totals instead of full-round par totals
+- Front 9, Back 9, Total and Stableford are shown while playing
+- The screen flashes briefly when moving to the next or previous hole so it is obvious the hole changed
+- Sign-in URL cleanup no longer strips simple cache-buster URLs like `?v=087`
+- Service worker caching reduced for app files to avoid old-version issues
 
 ## Important
-- `js/config.js` is intentionally not included in this ZIP
-- Keep your existing `js/config.js` when copying this update into your local project
+Keep your existing `js/config.js`. It is intentionally not included in this ZIP.
