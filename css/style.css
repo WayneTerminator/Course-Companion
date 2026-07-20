@@ -1166,3 +1166,22 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* v0.8.8 Scottburgh course tile */
+.scottburgh-art {
+  background:
+    radial-gradient(circle at 25% 20%, rgba(215, 180, 106, 0.45), transparent 28%),
+    linear-gradient(135deg, rgba(6, 63, 43, 0.92), rgba(21, 102, 70, 0.72)),
+    linear-gradient(to top, rgba(6, 63, 43, 0.82), rgba(6, 63, 43, 0.10));
+  background-size: cover;
+  background-position: center;
+}
+
+.scottburgh-art-large {
+  background:
+    radial-gradient(circle at 24% 22%, rgba(215, 180, 106, 0.42), transparent 30%),
+    linear-gradient(135deg, rgba(6, 63, 43, 0.92), rgba(21, 102, 70, 0.62)),
+    linear-gradient(to top, rgba(6, 63, 43, 0.84), rgba(6, 63, 43, 0.08));
+  background-size: cover;
+  background-position: center;
+}

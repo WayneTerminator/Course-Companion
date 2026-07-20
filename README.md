@@ -1,15 +1,23 @@
-# Course Companion v0.8.7
+# Course Companion v0.8.8
 
-Play-test fixes.
+Course data update and Scottburgh Golf Club.
 
-## What changed
-- Active rounds now auto-save locally after every score change
-- If the app is closed, refreshed, or interrupted, an unfinished round can be resumed from the home screen
-- Live scoring summary now shows running stroke totals instead of full-round par totals
-- Front 9, Back 9, Total and Stableford are shown while playing
-- The screen flashes briefly when moving to the next or previous hole so it is obvious the hole changed
-- Sign-in URL cleanup no longer strips simple cache-buster URLs like `?v=087`
-- Service worker caching reduced for app files to avoid old-version issues
+## What is new
+- Added Scottburgh Golf Club
+- Corrected San Lameer Championship back nine
+- San Lameer hole 10 is now 281m / Par 4 / SI 8
+- San Lameer Championship total updated to 5,834m / Par 72
+- Scottburgh loaded as 18 holes / Par 69 / 5,323m
+- Keeps v0.8.7 play-test fixes:
+  - active-round auto-save
+  - unfinished round resume
+  - running front/back/total scoring
+  - hole-change screen flash
+  - per-player handicaps
 
 ## Important
-Keep your existing `js/config.js`. It is intentionally not included in this ZIP.
+- `js/config.js` is intentionally not included in this ZIP.
+- Keep your existing `js/config.js` when copying this update into your local project.
+
+## Test URL after deployment
+https://wayneterminator.github.io/Course-Companion/index.html?v=088

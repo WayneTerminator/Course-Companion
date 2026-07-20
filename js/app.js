@@ -34,22 +34,22 @@ const courses = {
   },
   championship: {
     name: "San Lameer Championship",
-    details: "18 holes · Par 72 · Club tees 5,816m",
+    details: "18 holes · Par 72 · White tees 5,834m",
     aboutTitle: "A full 18-hole championship round in the conservancy",
-    description: "San Lameer's 18-hole championship course winds through glades, wetlands and forest in a wildlife-rich coastal conservancy. This playtest version loads the official par and stroke index, together with a practical club-tee distance set for live scoring.",
+    description: "San Lameer's 18-hole championship course winds through glades, wetlands and forest in a wildlife-rich coastal conservancy. This version uses the checked white-tee scorecard with corrected back-nine hole order, par and stroke index.",
     heroClass: "championship-art-large",
     distanceUnit: "m",
     facts: [
       { label: "Holes", value: "18" },
       { label: "Par", value: "72" },
-      { label: "Longest", value: "478m" },
-      { label: "Shortest", value: "140m" }
+      { label: "Total", value: "5,834m" },
+      { label: "Longest", value: "478m" }
     ],
     notes: [
-      "Designed by Peter Matkovich and Dale Hayes",
-      "Set through glades, forest and wetlands in a subtropical conservancy",
-      "Uses your full 18-hole course handicap for scoring",
-      "Club-tee distances loaded for this first Championship playtest"
+      "Checked against current scorecard data before your Sunday playtest",
+      "Hole 10 corrected to 281m · Par 4 · SI 8",
+      "Back nine order corrected from holes 10 to 18",
+      "Uses your full 18-hole course handicap for scoring"
     ],
     handicapMode: "full",
     handicapHelper: "For the Championship course, enter your full 18-hole course handicap.",
@@ -63,12 +63,12 @@ const courses = {
       { hole: 7, distance: 400, par: 4, stroke: 1 },
       { hole: 8, distance: 452, par: 5, stroke: 11 },
       { hole: 9, distance: 182, par: 3, stroke: 15 },
-      { hole: 10, distance: 440, par: 5, stroke: 2 },
-      { hole: 11, distance: 281, par: 4, stroke: 8 },
-      { hole: 12, distance: 148, par: 3, stroke: 16 },
-      { hole: 13, distance: 303, par: 4, stroke: 4 },
-      { hole: 14, distance: 352, par: 4, stroke: 12 },
-      { hole: 15, distance: 280, par: 4, stroke: 18 },
+      { hole: 10, distance: 281, par: 4, stroke: 8 },
+      { hole: 11, distance: 303, par: 4, stroke: 4 },
+      { hole: 12, distance: 298, par: 4, stroke: 18 },
+      { hole: 13, distance: 440, par: 5, stroke: 2 },
+      { hole: 14, distance: 148, par: 3, stroke: 16 },
+      { hole: 15, distance: 352, par: 4, stroke: 12 },
       { hole: 16, distance: 172, par: 3, stroke: 14 },
       { hole: 17, distance: 470, par: 5, stroke: 10 },
       { hole: 18, distance: 321, par: 4, stroke: 6 }
@@ -114,6 +114,48 @@ const courses = {
       { hole: 16, distance: 141, par: 3, stroke: 16 },
       { hole: 17, distance: 350, par: 4, stroke: 4 },
       { hole: 18, distance: 360, par: 4, stroke: 2 }
+    ]
+  },
+  scottburgh: {
+    name: "Scottburgh Golf Club",
+    details: "18 holes · Par 69 · Men’s tees 5,323m",
+    aboutTitle: "A classic South Coast parkland test",
+    description: "Scottburgh Golf Club is an 18-hole parkland course on the KZN South Coast. This playtest version uses the men’s scorecard data for live scoring, with the course playing to Par 69 over 5,323m.",
+    heroClass: "scottburgh-art-large",
+    distanceUnit: "m",
+    facts: [
+      { label: "Holes", value: "18" },
+      { label: "Par", value: "69" },
+      { label: "Total", value: "5,323m" },
+      { label: "Longest", value: "424m" }
+    ],
+    notes: [
+      "Men’s scorecard loaded for your Sunday round review",
+      "Front nine Par 35, back nine Par 34",
+      "Uses your full 18-hole course handicap for scoring",
+      "We can add your own hole notes once you have played it again"
+    ],
+    handicapMode: "full",
+    handicapHelper: "For Scottburgh, enter your full 18-hole course handicap.",
+    holes: [
+      { hole: 1, distance: 359, par: 4, stroke: 5 },
+      { hole: 2, distance: 156, par: 3, stroke: 13 },
+      { hole: 3, distance: 279, par: 4, stroke: 11 },
+      { hole: 4, distance: 354, par: 4, stroke: 3 },
+      { hole: 5, distance: 145, par: 3, stroke: 15 },
+      { hole: 6, distance: 424, par: 5, stroke: 17 },
+      { hole: 7, distance: 361, par: 4, stroke: 1 },
+      { hole: 8, distance: 375, par: 4, stroke: 9 },
+      { hole: 9, distance: 331, par: 4, stroke: 7 },
+      { hole: 10, distance: 116, par: 3, stroke: 18 },
+      { hole: 11, distance: 360, par: 4, stroke: 2 },
+      { hole: 12, distance: 307, par: 4, stroke: 10 },
+      { hole: 13, distance: 175, par: 3, stroke: 6 },
+      { hole: 14, distance: 333, par: 4, stroke: 12 },
+      { hole: 15, distance: 423, par: 5, stroke: 14 },
+      { hole: 16, distance: 331, par: 4, stroke: 8 },
+      { hole: 17, distance: 126, par: 3, stroke: 16 },
+      { hole: 18, distance: 368, par: 4, stroke: 4 }
     ]
   },
   margate: {
