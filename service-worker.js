@@ -1,4 +1,4 @@
-const CACHE_NAME = "course-companion-v0-8-8";
+const CACHE_NAME = "course-companion-v0-8-9";
 
 const CORE_ASSETS = [
   "./manifest.json",

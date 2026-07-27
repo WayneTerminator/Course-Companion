@@ -759,7 +759,7 @@ function renderCurrentHole() {
   const hole = course[currentHole];
   document.getElementById("hole-title").textContent = `Hole ${hole.hole}`;
   document.getElementById("hole-details").textContent = `${hole.distance}${courses[selectedCourseKey].distanceUnit || "m"} · Par ${hole.par} · SI ${hole.stroke}`;
-  document.getElementById("hole-number-badge").textContent = `${hole.hole} / ${course.length}`;
+  document.getElementById("hole-number-badge").textContent = `Hole ${hole.hole} of ${course.length}`;
   const holeNote = document.getElementById("hole-strategy-note");
   if (holeNote) {
     holeNote.textContent = hole.note || "Score first. We can add detailed notes for this hole later.";
@@ -968,10 +968,24 @@ function resetScores() {
 }
 
 function flashHoleChange() {
+  document.body.classList.remove("hole-advance-flash");
   roundScreen.classList.remove("hole-advance-flash");
   void roundScreen.offsetWidth;
+  document.body.classList.add("hole-advance-flash");
   roundScreen.classList.add("hole-advance-flash");
-  setTimeout(() => roundScreen.classList.remove("hole-advance-flash"), 550);
+
+  if ("vibrate" in navigator) {
+    try {
+      navigator.vibrate(45);
+    } catch (error) {
+      // Vibration support varies by phone and browser.
+    }
+  }
+
+  setTimeout(() => {
+    document.body.classList.remove("hole-advance-flash");
+    roundScreen.classList.remove("hole-advance-flash");
+  }, 760);
 }
 
 function nextHole() {
@@ -1362,6 +1376,115 @@ document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "hidden") saveActiveRoundDraft();
 });
 
+
+function csvEscape(value) {
+  const text = value === null || value === undefined ? "" : String(value);
+  if (/[",\n]/.test(text)) return `"${text.replace(/"/g, '""')}"`;
+  return text;
+}
+
+function localDateKey(dateValue) {
+  const parsed = new Date(dateValue);
+  if (Number.isNaN(parsed.getTime())) return "";
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function todayKey() {
+  return localDateKey(new Date());
+}
+
+function safeFilePart(value) {
+  return String(value || "history").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function roundsForExport(mode) {
+  const sourceRounds = displayedHistoryRounds && displayedHistoryRounds.length
+    ? displayedHistoryRounds
+    : localRounds().map(ensureLocalId);
+
+  if (mode === "today") {
+    return sourceRounds.filter(round => localDateKey(round.date) === todayKey());
+  }
+
+  if (mode === "course") {
+    const selectedCourseName = courses[selectedCourseKey]?.name;
+    return sourceRounds.filter(round => round.course === selectedCourseName);
+  }
+
+  return sourceRounds;
+}
+
+function exportHistoryCsv(mode = "all") {
+  const rounds = roundsForExport(mode);
+
+  if (!rounds.length) {
+    alert("No rounds found for this export.");
+    return;
+  }
+
+  const maxHoles = Math.max(...rounds.map(round => (round.scores || []).length));
+  const courseName = mode === "course" ? courses[selectedCourseKey]?.name : "";
+  const title = mode === "today"
+    ? "Course Companion History - Today"
+    : mode === "course"
+      ? `Course Companion History - ${courseName}`
+      : "Course Companion History - All Courses";
+
+  const lines = [];
+  lines.push([title].map(csvEscape).join(","));
+  lines.push(["Exported", new Date().toLocaleString()].map(csvEscape).join(","));
+  lines.push("");
+
+  const header = ["Date", "Course", "Player", "Course HCP", "Playing HCP"];
+  for (let i = 1; i <= maxHoles; i++) header.push(`Hole ${i}`);
+  header.push("Gross", "Net", "Stableford");
+  lines.push(header.map(csvEscape).join(","));
+
+  const groupedCourseKeys = [...new Set(rounds.map(round => courseKeyFromName(round.course)))];
+
+  groupedCourseKeys.forEach(courseKey => {
+    const selected = courses[courseKey] || courses.mashie;
+    const pars = ["", selected.name, "PAR", "", ""];
+    for (let i = 0; i < maxHoles; i++) pars.push(selected.holes[i]?.par ?? "");
+    pars.push("", "", "");
+    lines.push(pars.map(csvEscape).join(","));
+
+    rounds
+      .filter(round => courseKeyFromName(round.course) === courseKey)
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .forEach(round => {
+        const row = [
+          localDateKey(round.date),
+          round.course,
+          round.player,
+          round.courseHandicap ?? "",
+          round.playingHandicap ?? round.mashieHandicap ?? ""
+        ];
+
+        for (let i = 0; i < maxHoles; i++) row.push(round.scores?.[i] ?? "");
+        row.push(round.gross ?? "", round.net ?? "", round.stableford ?? "");
+        lines.push(row.map(csvEscape).join(","));
+      });
+
+    lines.push("");
+  });
+
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const suffix = mode === "today" ? "today" : mode === "course" ? safeFilePart(courseName) : "all";
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `course-companion-${suffix}-${todayKey()}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+
 document.querySelectorAll(".course-tile").forEach(btn => {
   btn.addEventListener("click", () => selectCourse(btn.dataset.course));
 });
@@ -1391,6 +1514,9 @@ document.getElementById("round-detail-back").addEventListener("click", () => {
   renderHistory();
   showScreen(historyScreen);
 });
+document.getElementById("export-all-history").addEventListener("click", () => exportHistoryCsv("all"));
+document.getElementById("export-course-history").addEventListener("click", () => exportHistoryCsv("course"));
+document.getElementById("export-today-history").addEventListener("click", () => exportHistoryCsv("today"));
 document.getElementById("history-button").addEventListener("click", () => {
   renderHistory();
   showScreen(historyScreen);

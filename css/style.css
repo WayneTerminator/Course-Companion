@@ -1185,3 +1185,97 @@ button {
   background-size: cover;
   background-position: center;
 }
+
+
+/* v0.8.9 clearer on-course display */
+body.hole-advance-flash {
+  background: #063f2b;
+}
+
+#round-screen.hole-advance-flash {
+  animation: strongRoundAdvanceFlash 760ms ease-out;
+}
+
+#round-screen.hole-advance-flash .hole-title-card {
+  animation: strongHoleCardPop 760ms ease-out;
+}
+
+@keyframes strongRoundAdvanceFlash {
+  0% {
+    background: #063f2b;
+    color: #fff9ea;
+    filter: brightness(1.08);
+  }
+  42% {
+    background: #d7b46a;
+    color: #063f2b;
+    filter: brightness(1.04);
+  }
+  100% {
+    background: transparent;
+    color: inherit;
+    filter: none;
+  }
+}
+
+@keyframes strongHoleCardPop {
+  0% {
+    transform: scale(0.96);
+    background: #063f2b;
+    color: #fff9ea;
+    border-color: #d7b46a;
+  }
+  45% {
+    transform: scale(1.025);
+    background: #d7b46a;
+    color: #063f2b;
+    border-color: #063f2b;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#round-screen #hole-title {
+  font-size: clamp(44px, 13vw, 78px);
+  line-height: 0.9;
+  letter-spacing: -1.6px;
+  margin: 4px 0 6px;
+}
+
+#round-screen #hole-details {
+  font-size: 17px;
+  font-weight: 950;
+}
+
+#round-screen #hole-number-badge {
+  min-width: 112px;
+  min-height: 56px;
+  height: auto;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #d7b46a;
+  color: #063f2b;
+  border: 3px solid #063f2b;
+  font-size: 18px;
+  line-height: 1.05;
+  text-align: center;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
+}
+
+.export-panel h3 {
+  margin: 4px 0 4px;
+}
+
+.export-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@media (min-width: 640px) {
+  .export-actions {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

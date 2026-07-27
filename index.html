@@ -25,7 +25,7 @@
         <div class="home-topline">
           <div class="brand-mark">CC</div>
           <div class="home-pills">
-            <div class="version-pill">v0.8.8</div>
+            <div class="version-pill">v0.8.9</div>
             <div class="version-pill account-pill" id="account-status-pill">Guest Mode</div>
           </div>
         </div>
@@ -299,6 +299,17 @@
       </section>
 
       <button class="primary-action full-width" id="add-previous-round">＋ Add Previous Round</button>
+
+      <section class="panel export-panel">
+        <p class="eyebrow">Export</p>
+        <h3>Download Excel-compatible history</h3>
+        <p class="helper">Exports as a CSV file that opens in Excel, with par in the top row and scores per hole underneath.</p>
+        <div class="export-actions">
+          <button class="secondary-action" id="export-all-history">Export All</button>
+          <button class="secondary-action" id="export-course-history">This Course</button>
+          <button class="secondary-action" id="export-today-history">Today</button>
+        </div>
+      </section>
 
       <div id="history-list" class="history-list"></div>
     </section>
