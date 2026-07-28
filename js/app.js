@@ -21,7 +21,7 @@ const courses = {
     handicapMode: "half",
     handicapHelper: "For the Mashie, Course Companion calculates your playing handicap as half of this.",
     holes: [
-      { hole: 1, distance: 70, par: 3, stroke: 7, mapImage: "assets/mashie-hole-guide-1-v4.png", gps: {"tee":{"lat":-30.941922,"lon":30.302127},"front":{"lat":-30.942174,"lon":30.301667},"center":{"lat":-30.94222,"lon":30.301594},"back":{"lat":-30.942269,"lon":30.301519}} },
+      { hole: 1, distance: 70, par: 3, stroke: 7, mapImage: "assets/mashie-hole-guide-1-v5.png", gps: {"tee":{"lat":-30.941922,"lon":30.302127},"front":{"lat":-30.942174,"lon":30.301667},"center":{"lat":-30.94222,"lon":30.301594},"back":{"lat":-30.942269,"lon":30.301519}} },
       { hole: 2, distance: 82, par: 3, stroke: 8, mapImage: "assets/mashie-hole-guide-2-v4.png", gps: {"tee":{"lat":-30.942792,"lon":30.301592},"front":{"lat":-30.943443,"lon":30.301413},"center":{"lat":-30.943486,"lon":30.301402},"back":{"lat":-30.943537,"lon":30.301387}} },
       { hole: 3, distance: 96, par: 3, stroke: 3, mapImage: "assets/mashie-hole-guide-3-v4.png", gps: {"tee":{"lat":-30.943909,"lon":30.301304},"front":{"lat":-30.943327,"lon":30.301792},"center":{"lat":-30.943266,"lon":30.301821},"back":{"lat":-30.943213,"lon":30.301844}} },
       { hole: 4, distance: 86, par: 3, stroke: 5, mapImage: "assets/mashie-hole-guide-4-v4.png", gps: {"tee":{"lat":-30.942424,"lon":30.301637},"front":{"lat":-30.942336,"lon":30.300871},"center":{"lat":-30.942327,"lon":30.300786},"back":{"lat":-30.942326,"lon":30.300692}} },

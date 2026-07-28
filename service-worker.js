@@ -1,4 +1,4 @@
-const CACHE_NAME = "course-companion-v0-9-4";
+const CACHE_NAME = "course-companion-v0-9-5";
 
 const CORE_ASSETS = [
   "./manifest.json",
@@ -10,7 +10,7 @@ const CORE_ASSETS = [
   "./assets/kokstad-tile.jpg",
   "./assets/margate-hero.jpg",
   "./assets/margate-tile.jpg",
-  "./assets/mashie-hole-guide-1-v4.png",
+  "./assets/mashie-hole-guide-1-v5.png",
   "./assets/mashie-hole-guide-2-v4.png",
   "./assets/mashie-hole-guide-3-v4.png",
   "./assets/mashie-hole-guide-4-v4.png",
