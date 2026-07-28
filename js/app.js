@@ -21,15 +21,15 @@ const courses = {
     handicapMode: "half",
     handicapHelper: "For the Mashie, Course Companion calculates your playing handicap as half of this.",
     holes: [
-      { hole: 1, distance: 70, par: 3, stroke: 7 },
-      { hole: 2, distance: 82, par: 3, stroke: 8 },
-      { hole: 3, distance: 96, par: 3, stroke: 3 },
-      { hole: 4, distance: 86, par: 3, stroke: 5 },
-      { hole: 5, distance: 134, par: 3, stroke: 1 },
-      { hole: 6, distance: 90, par: 3, stroke: 4 },
-      { hole: 7, distance: 104, par: 3, stroke: 2 },
-      { hole: 8, distance: 58, par: 3, stroke: 9 },
-      { hole: 9, distance: 78, par: 3, stroke: 6 }
+      { hole: 1, distance: 70, par: 3, stroke: 7, mapImage: "assets/mashie-hole-map-1.png", photoImage: "assets/mashie-hole-photo-1.png" },
+      { hole: 2, distance: 82, par: 3, stroke: 8, mapImage: "assets/mashie-hole-map-2.png", photoImage: "assets/mashie-hole-photo-2.png" },
+      { hole: 3, distance: 96, par: 3, stroke: 3, mapImage: "assets/mashie-hole-map-3.png", photoImage: "assets/mashie-hole-photo-3.png" },
+      { hole: 4, distance: 86, par: 3, stroke: 5, mapImage: "assets/mashie-hole-map-4.png", photoImage: "assets/mashie-hole-photo-4.png" },
+      { hole: 5, distance: 134, par: 3, stroke: 1, mapImage: "assets/mashie-hole-map-5.png", photoImage: "assets/mashie-hole-photo-5.png" },
+      { hole: 6, distance: 90, par: 3, stroke: 4, mapImage: "assets/mashie-hole-map-6.png", photoImage: "assets/mashie-hole-photo-6.png" },
+      { hole: 7, distance: 104, par: 3, stroke: 2, mapImage: "assets/mashie-hole-map-7.png", photoImage: "assets/mashie-hole-photo-7.png" },
+      { hole: 8, distance: 58, par: 3, stroke: 9, mapImage: "assets/mashie-hole-map-8.png", photoImage: "assets/mashie-hole-photo-8.png" },
+      { hole: 9, distance: 78, par: 3, stroke: 6, mapImage: "assets/mashie-hole-map-9.png", photoImage: "assets/mashie-hole-photo-9.png" }
     ]
   },
   championship: {
@@ -755,11 +755,59 @@ function isExpanded(playerIndex) {
   return expandedScorePicker === `${playerIndex}-${currentHole}`;
 }
 
+function renderHoleVisual(hole) {
+  const visualCard = document.getElementById("hole-visual-card");
+  const visualLabel = document.getElementById("hole-visual-label");
+  const visualSubtitle = document.getElementById("hole-visual-subtitle");
+  const visualImage = document.getElementById("hole-visual-image");
+  const visualCaption = document.getElementById("hole-visual-caption");
+  const photoWrap = document.getElementById("hole-photo-thumb-wrap");
+  const photoThumb = document.getElementById("hole-photo-thumb");
+
+  if (!visualCard || !visualImage || !visualLabel || !visualSubtitle || !visualCaption || !photoWrap || !photoThumb) return;
+
+  const hasMap = Boolean(hole.mapImage);
+  const hasPhoto = Boolean(hole.photoImage);
+
+  if (hasMap || hasPhoto) {
+    visualCard.classList.add("has-visual");
+    visualLabel.textContent = hasMap ? "Hole Guide" : "Hole Photo";
+    visualSubtitle.textContent = hasMap
+      ? "Garmin-style guide map for the current hole."
+      : "Reference image for the current hole.";
+    visualImage.src = hasMap ? hole.mapImage : hole.photoImage;
+    visualImage.alt = courses[selectedCourseKey].name + " hole " + hole.hole + (hasMap ? " guide map" : " photo");
+    visualImage.hidden = false;
+    visualCaption.textContent = hasMap
+      ? "Hole " + hole.hole + " layout guide. Tap score buttons below after each shot."
+      : "Hole " + hole.hole + " reference image.";
+
+    if (hasMap && hasPhoto) {
+      photoWrap.hidden = false;
+      photoThumb.src = hole.photoImage;
+      photoThumb.alt = courses[selectedCourseKey].name + " hole " + hole.hole + " reference photo";
+    } else {
+      photoWrap.hidden = true;
+      photoThumb.removeAttribute("src");
+    }
+  } else {
+    visualCard.classList.remove("has-visual");
+    visualLabel.textContent = "Hole Photo";
+    visualSubtitle.textContent = "Reference image coming soon for this hole.";
+    visualImage.hidden = true;
+    visualImage.removeAttribute("src");
+    visualCaption.textContent = "Photo placeholder — we can add guide maps and tee-shot images later.";
+    photoWrap.hidden = true;
+    photoThumb.removeAttribute("src");
+  }
+}
+
 function renderCurrentHole() {
   const hole = course[currentHole];
   document.getElementById("hole-title").textContent = `Hole ${hole.hole}`;
   document.getElementById("hole-details").textContent = `${hole.distance}${courses[selectedCourseKey].distanceUnit || "m"} · Par ${hole.par} · SI ${hole.stroke}`;
   document.getElementById("hole-number-badge").textContent = `Hole ${hole.hole} of ${course.length}`;
+  renderHoleVisual(hole);
   const holeNote = document.getElementById("hole-strategy-note");
   if (holeNote) {
     holeNote.textContent = hole.note || "Score first. We can add detailed notes for this hole later.";

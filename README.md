@@ -1,23 +1,15 @@
-# Course Companion v0.8.9
+# Course Companion v0.9.1
 
-On-course clarity and history export.
+Small correction to the Mashie guide-map integration.
 
-## What is new
-- Larger, clearer hole number display
-- Stronger screen colour change when moving to the next or previous hole
-- Short vibration on hole change where the phone/browser supports it
-- Excel-compatible CSV history export
-- Export options:
-  - all history
-  - currently selected course
-  - today only
-- Export includes par row at the top, hole-by-hole scores, gross, net and Stableford
+## What changed
+- Corrected Mashie Hole 1 guide map so it no longer shows trees in front of the tee.
+- Keeps the Mashie hole guide maps and reference images on the live scoring screen.
+- Keeps all v0.8.9 features, including history export and stronger hole-change flash.
 
-## Notes
-- Export downloads a `.csv` file. Excel opens this directly.
-- Email export is not included yet because it would need extra email/backend setup.
-- iPhone Safari may ignore vibration because iOS does not consistently support browser vibration.
-- `js/config.js` is intentionally not included. Keep your existing file.
+## Important
+- `js/config.js` is intentionally not included.
+- Keep your existing `js/config.js` when copying this update into your local project.
 
 ## Test URL after deployment
-https://wayneterminator.github.io/Course-Companion/index.html?v=089
+https://wayneterminator.github.io/Course-Companion/index.html?v=091
