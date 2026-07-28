@@ -1,4 +1,4 @@
-# Course Companion v0.9.1
+# Course Companion v0.9.2
 
 Small correction to the Mashie guide-map integration.
 

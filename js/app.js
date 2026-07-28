@@ -761,44 +761,25 @@ function renderHoleVisual(hole) {
   const visualSubtitle = document.getElementById("hole-visual-subtitle");
   const visualImage = document.getElementById("hole-visual-image");
   const visualCaption = document.getElementById("hole-visual-caption");
-  const photoWrap = document.getElementById("hole-photo-thumb-wrap");
-  const photoThumb = document.getElementById("hole-photo-thumb");
-
-  if (!visualCard || !visualImage || !visualLabel || !visualSubtitle || !visualCaption || !photoWrap || !photoThumb) return;
+  if (!visualCard || !visualImage || !visualLabel || !visualSubtitle || !visualCaption) return;
 
   const hasMap = Boolean(hole.mapImage);
-  const hasPhoto = Boolean(hole.photoImage);
 
-  if (hasMap || hasPhoto) {
+  if (hasMap) {
     visualCard.classList.add("has-visual");
-    visualLabel.textContent = hasMap ? "Hole Guide" : "Hole Photo";
-    visualSubtitle.textContent = hasMap
-      ? "Garmin-style guide map for the current hole."
-      : "Reference image for the current hole.";
-    visualImage.src = hasMap ? hole.mapImage : hole.photoImage;
-    visualImage.alt = courses[selectedCourseKey].name + " hole " + hole.hole + (hasMap ? " guide map" : " photo");
+    visualLabel.textContent = "Hole Guide";
+    visualSubtitle.textContent = "Course guide map for the current hole.";
+    visualImage.src = hole.mapImage;
+    visualImage.alt = courses[selectedCourseKey].name + " hole " + hole.hole + " guide map";
     visualImage.hidden = false;
-    visualCaption.textContent = hasMap
-      ? "Hole " + hole.hole + " layout guide. Tap score buttons below after each shot."
-      : "Hole " + hole.hole + " reference image.";
-
-    if (hasMap && hasPhoto) {
-      photoWrap.hidden = false;
-      photoThumb.src = hole.photoImage;
-      photoThumb.alt = courses[selectedCourseKey].name + " hole " + hole.hole + " reference photo";
-    } else {
-      photoWrap.hidden = true;
-      photoThumb.removeAttribute("src");
-    }
+    visualCaption.textContent = "Hole " + hole.hole + " layout guide. Tap score buttons below after each shot.";
   } else {
     visualCard.classList.remove("has-visual");
-    visualLabel.textContent = "Hole Photo";
-    visualSubtitle.textContent = "Reference image coming soon for this hole.";
+    visualLabel.textContent = "Hole Guide";
+    visualSubtitle.textContent = "Guide map coming soon for this hole.";
     visualImage.hidden = true;
     visualImage.removeAttribute("src");
-    visualCaption.textContent = "Photo placeholder — we can add guide maps and tee-shot images later.";
-    photoWrap.hidden = true;
-    photoThumb.removeAttribute("src");
+    visualCaption.textContent = "Guide map placeholder — we can add a clean hole layout here later.";
   }
 }
 
