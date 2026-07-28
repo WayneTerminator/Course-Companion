@@ -21,15 +21,15 @@ const courses = {
     handicapMode: "half",
     handicapHelper: "For the Mashie, Course Companion calculates your playing handicap as half of this.",
     holes: [
-      { hole: 1, distance: 70, par: 3, stroke: 7, mapImage: "assets/mashie-hole-map-1.png", photoImage: "assets/mashie-hole-photo-1.png" },
-      { hole: 2, distance: 82, par: 3, stroke: 8, mapImage: "assets/mashie-hole-map-2.png", photoImage: "assets/mashie-hole-photo-2.png" },
-      { hole: 3, distance: 96, par: 3, stroke: 3, mapImage: "assets/mashie-hole-map-3.png", photoImage: "assets/mashie-hole-photo-3.png" },
-      { hole: 4, distance: 86, par: 3, stroke: 5, mapImage: "assets/mashie-hole-map-4.png", photoImage: "assets/mashie-hole-photo-4.png" },
-      { hole: 5, distance: 134, par: 3, stroke: 1, mapImage: "assets/mashie-hole-map-5.png", photoImage: "assets/mashie-hole-photo-5.png" },
-      { hole: 6, distance: 90, par: 3, stroke: 4, mapImage: "assets/mashie-hole-map-6.png", photoImage: "assets/mashie-hole-photo-6.png" },
-      { hole: 7, distance: 104, par: 3, stroke: 2, mapImage: "assets/mashie-hole-map-7.png", photoImage: "assets/mashie-hole-photo-7.png" },
-      { hole: 8, distance: 58, par: 3, stroke: 9, mapImage: "assets/mashie-hole-map-8.png", photoImage: "assets/mashie-hole-photo-8.png" },
-      { hole: 9, distance: 78, par: 3, stroke: 6, mapImage: "assets/mashie-hole-map-9.png", photoImage: "assets/mashie-hole-photo-9.png" }
+      { hole: 1, distance: 70, par: 3, stroke: 7, mapImage: "assets/mashie-hole-guide-1-v3.png" },
+      { hole: 2, distance: 82, par: 3, stroke: 8, mapImage: "assets/mashie-hole-guide-2-v3.png" },
+      { hole: 3, distance: 96, par: 3, stroke: 3, mapImage: "assets/mashie-hole-guide-3-v3.png" },
+      { hole: 4, distance: 86, par: 3, stroke: 5, mapImage: "assets/mashie-hole-guide-4-v3.png" },
+      { hole: 5, distance: 134, par: 3, stroke: 1, mapImage: "assets/mashie-hole-guide-5-v3.png" },
+      { hole: 6, distance: 90, par: 3, stroke: 4, mapImage: "assets/mashie-hole-guide-6-v3.png" },
+      { hole: 7, distance: 104, par: 3, stroke: 2, mapImage: "assets/mashie-hole-guide-7-v3.png" },
+      { hole: 8, distance: 58, par: 3, stroke: 9, mapImage: "assets/mashie-hole-guide-8-v3.png" },
+      { hole: 9, distance: 78, par: 3, stroke: 6, mapImage: "assets/mashie-hole-guide-9-v3.png" }
     ]
   },
   championship: {
@@ -768,7 +768,7 @@ function renderHoleVisual(hole) {
   if (hasMap) {
     visualCard.classList.add("has-visual");
     visualLabel.textContent = "Hole Guide";
-    visualSubtitle.textContent = "Course guide map for the current hole.";
+    visualSubtitle.textContent = "Course guide for the current hole.";
     visualImage.src = hole.mapImage;
     visualImage.alt = courses[selectedCourseKey].name + " hole " + hole.hole + " guide map";
     visualImage.hidden = false;
