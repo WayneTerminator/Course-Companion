@@ -1337,3 +1337,87 @@ body.hole-advance-flash {
     display: block;
   }
 }
+
+
+/* v0.9.4 GPS yardage panel */
+.gps-panel {
+  padding: 14px;
+  margin: 0 0 10px;
+  border-radius: 24px;
+  background: rgba(255, 250, 240, 0.98);
+  border: 1px solid rgba(215, 180, 106, 0.52);
+}
+
+.gps-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.gps-panel h3 {
+  margin: 0;
+  color: var(--green);
+  font-size: 22px;
+}
+
+.gps-distance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.gps-distance-card {
+  border-radius: 18px;
+  background: rgba(6, 63, 43, 0.08);
+  padding: 10px 8px;
+  text-align: center;
+  border: 1px solid rgba(6, 63, 43, 0.10);
+}
+
+.gps-distance-card span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.gps-distance-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 26px;
+  color: var(--green);
+}
+
+.gps-distance-card.primary {
+  background: linear-gradient(135deg, var(--green), var(--green-light));
+  border-color: var(--gold);
+}
+
+.gps-distance-card.primary span {
+  color: var(--gold);
+}
+
+.gps-distance-card.primary strong {
+  color: white;
+  font-size: 30px;
+}
+
+.gps-extra-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+#gps-status {
+  margin-top: 8px;
+  margin-bottom: 0;
+}

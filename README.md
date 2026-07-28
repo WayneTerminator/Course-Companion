@@ -1,17 +1,21 @@
-# Course Companion v0.9.3
+# Course Companion v0.9.4
 
-Corrected Mashie hole guide image integration.
+Adds first-pass GPS yardage for San Lameer Mashie.
 
-## What changed
-- Replaced the old schematic hole-map images with the cleaner illustrated guide images.
-- Renamed the guide image files to new v3 filenames so the browser should not keep showing old cached PNGs.
-- Removed the Google Earth reference photo assets from this build.
-- Removed Garmin wording and kept the wording as "Hole Guide" / "Course guide".
-- Version badge updated to v0.9.3.
+## What is new
+- Adds GPS panel on the live round screen for Mashie holes.
+- Shows live distance to Green Front, Middle and Back.
+- Shows distance from your current position back to the tee.
+- Shows GPS accuracy.
+- Uses the GPS waypoints from the completed Mashie waypoint spreadsheet.
+- Corrects Hole 1 guide image with a temporary clean version that removes the tree in front of the tee.
+- Uses new v4 image filenames to reduce image-cache issues.
 
 ## Important
-- `js/config.js` is intentionally not included.
-- Keep your existing `js/config.js` when copying this update into your local project.
+- GPS requires HTTPS, which GitHub Pages provides.
+- The first time you tap Enable GPS, the phone/browser will ask for location permission.
+- iPhone may work best when the app is open in Safari or opened from the Home Screen.
+- `js/config.js` is intentionally not included. Keep your existing file.
 
 ## Test URL after deployment
-https://wayneterminator.github.io/Course-Companion/index.html?v=093
+https://wayneterminator.github.io/Course-Companion/index.html?v=094

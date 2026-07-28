@@ -21,15 +21,15 @@ const courses = {
     handicapMode: "half",
     handicapHelper: "For the Mashie, Course Companion calculates your playing handicap as half of this.",
     holes: [
-      { hole: 1, distance: 70, par: 3, stroke: 7, mapImage: "assets/mashie-hole-guide-1-v3.png" },
-      { hole: 2, distance: 82, par: 3, stroke: 8, mapImage: "assets/mashie-hole-guide-2-v3.png" },
-      { hole: 3, distance: 96, par: 3, stroke: 3, mapImage: "assets/mashie-hole-guide-3-v3.png" },
-      { hole: 4, distance: 86, par: 3, stroke: 5, mapImage: "assets/mashie-hole-guide-4-v3.png" },
-      { hole: 5, distance: 134, par: 3, stroke: 1, mapImage: "assets/mashie-hole-guide-5-v3.png" },
-      { hole: 6, distance: 90, par: 3, stroke: 4, mapImage: "assets/mashie-hole-guide-6-v3.png" },
-      { hole: 7, distance: 104, par: 3, stroke: 2, mapImage: "assets/mashie-hole-guide-7-v3.png" },
-      { hole: 8, distance: 58, par: 3, stroke: 9, mapImage: "assets/mashie-hole-guide-8-v3.png" },
-      { hole: 9, distance: 78, par: 3, stroke: 6, mapImage: "assets/mashie-hole-guide-9-v3.png" }
+      { hole: 1, distance: 70, par: 3, stroke: 7, mapImage: "assets/mashie-hole-guide-1-v4.png", gps: {"tee":{"lat":-30.941922,"lon":30.302127},"front":{"lat":-30.942174,"lon":30.301667},"center":{"lat":-30.94222,"lon":30.301594},"back":{"lat":-30.942269,"lon":30.301519}} },
+      { hole: 2, distance: 82, par: 3, stroke: 8, mapImage: "assets/mashie-hole-guide-2-v4.png", gps: {"tee":{"lat":-30.942792,"lon":30.301592},"front":{"lat":-30.943443,"lon":30.301413},"center":{"lat":-30.943486,"lon":30.301402},"back":{"lat":-30.943537,"lon":30.301387}} },
+      { hole: 3, distance: 96, par: 3, stroke: 3, mapImage: "assets/mashie-hole-guide-3-v4.png", gps: {"tee":{"lat":-30.943909,"lon":30.301304},"front":{"lat":-30.943327,"lon":30.301792},"center":{"lat":-30.943266,"lon":30.301821},"back":{"lat":-30.943213,"lon":30.301844}} },
+      { hole: 4, distance: 86, par: 3, stroke: 5, mapImage: "assets/mashie-hole-guide-4-v4.png", gps: {"tee":{"lat":-30.942424,"lon":30.301637},"front":{"lat":-30.942336,"lon":30.300871},"center":{"lat":-30.942327,"lon":30.300786},"back":{"lat":-30.942326,"lon":30.300692}} },
+      { hole: 5, distance: 134, par: 3, stroke: 1, mapImage: "assets/mashie-hole-guide-5-v4.png", gps: {"tee":{"lat":-30.942035,"lon":30.301234},"front":{"lat":-30.941051,"lon":30.301463},"center":{"lat":-30.940964,"lon":30.301444},"back":{"lat":-30.940873,"lon":30.301428}} },
+      { hole: 6, distance: 90, par: 3, stroke: 4, mapImage: "assets/mashie-hole-guide-6-v4.png", gps: {"tee":{"lat":-30.941117,"lon":30.300977},"front":{"lat":-30.940608,"lon":30.30136},"center":{"lat":-30.940523,"lon":30.301424},"back":{"lat":-30.940449,"lon":30.301474}} },
+      { hole: 7, distance: 104, par: 3, stroke: 2, mapImage: "assets/mashie-hole-guide-7-v4.png", gps: {"tee":{"lat":-30.940576,"lon":30.301663},"front":{"lat":-30.941347,"lon":30.302065},"center":{"lat":-30.941387,"lon":30.3021},"back":{"lat":-30.941429,"lon":30.302131}} },
+      { hole: 8, distance: 58, par: 3, stroke: 9, mapImage: "assets/mashie-hole-guide-8-v4.png", gps: {"tee":{"lat":-30.941122,"lon":30.302276},"front":{"lat":-30.94103,"lon":30.302785},"center":{"lat":-30.941006,"lon":30.302838},"back":{"lat":-30.940988,"lon":30.302888}} },
+      { hole: 9, distance: 78, par: 3, stroke: 6, mapImage: "assets/mashie-hole-guide-9-v4.png", gps: {"tee":{"lat":-30.941292,"lon":30.302445},"front":{"lat":-30.941693,"lon":30.302078},"center":{"lat":-30.941751,"lon":30.302005},"back":{"lat":-30.941818,"lon":30.301923}} }
     ]
   },
   championship: {
@@ -212,6 +212,10 @@ let expandedScorePicker = null;
 let activeRoundInProgress = false;
 let activeRoundStartedAt = null;
 const ACTIVE_ROUND_KEY = "courseCompanionActiveRound";
+
+let gpsWatchId = null;
+let latestGpsPosition = null;
+let gpsTrackingActive = false;
 
 // Account / Supabase state
 let supabaseClient = null;
@@ -755,6 +759,129 @@ function isExpanded(playerIndex) {
   return expandedScorePicker === `${playerIndex}-${currentHole}`;
 }
 
+
+function toRadians(value) {
+  return value * Math.PI / 180;
+}
+
+function distanceMeters(a, b) {
+  if (!a || !b) return null;
+  const earthRadius = 6371000;
+  const lat1 = toRadians(a.lat);
+  const lat2 = toRadians(b.lat);
+  const dLat = toRadians(b.lat - a.lat);
+  const dLon = toRadians(b.lon - a.lon);
+  const h = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+  return earthRadius * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+function distanceLabel(meters) {
+  if (meters === null || Number.isNaN(meters)) return "—";
+  return `${Math.round(meters)}m`;
+}
+
+function currentGpsPoint() {
+  if (!latestGpsPosition) return null;
+  return {
+    lat: latestGpsPosition.coords.latitude,
+    lon: latestGpsPosition.coords.longitude
+  };
+}
+
+function setGpsText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+function renderGpsPanel(hole) {
+  const panel = document.getElementById("gps-panel");
+  if (!panel) return;
+
+  const gps = hole.gps;
+  if (!gps) {
+    panel.style.display = "none";
+    return;
+  }
+
+  panel.style.display = "block";
+  updateGpsDistances();
+
+  const button = document.getElementById("gps-start-button");
+  if (button) button.textContent = gpsTrackingActive ? "GPS On" : "Enable GPS";
+}
+
+function updateGpsDistances() {
+  const hole = course[currentHole];
+  const gps = hole?.gps;
+  const current = currentGpsPoint();
+
+  if (!gps) return;
+
+  if (!current) {
+    setGpsText("gps-front-distance", "—");
+    setGpsText("gps-center-distance", "—");
+    setGpsText("gps-back-distance", "—");
+    setGpsText("gps-tee-distance", "Tee: —");
+    setGpsText("gps-accuracy", "Accuracy: —");
+    setGpsText("gps-status", gpsTrackingActive ? "Waiting for GPS position..." : "Tap Enable GPS while outdoors on the course.");
+    return;
+  }
+
+  setGpsText("gps-front-distance", distanceLabel(distanceMeters(current, gps.front)));
+  setGpsText("gps-center-distance", distanceLabel(distanceMeters(current, gps.center)));
+  setGpsText("gps-back-distance", distanceLabel(distanceMeters(current, gps.back)));
+  setGpsText("gps-tee-distance", `Tee: ${distanceLabel(distanceMeters(current, gps.tee))}`);
+  setGpsText("gps-accuracy", `Accuracy: ±${Math.round(latestGpsPosition.coords.accuracy || 0)}m`);
+  setGpsText("gps-status", `Live GPS on Hole ${hole.hole}. Distances update as you move.`);
+}
+
+function startGpsTracking() {
+  const status = document.getElementById("gps-status");
+  const button = document.getElementById("gps-start-button");
+
+  if (!("geolocation" in navigator)) {
+    if (status) status.textContent = "GPS is not available in this browser.";
+    return;
+  }
+
+  if (gpsWatchId !== null) {
+    updateGpsDistances();
+    return;
+  }
+
+  gpsTrackingActive = true;
+  if (button) button.textContent = "GPS On";
+  if (status) status.textContent = "Requesting GPS permission...";
+
+  gpsWatchId = navigator.geolocation.watchPosition(
+    position => {
+      latestGpsPosition = position;
+      gpsTrackingActive = true;
+      if (button) button.textContent = "GPS On";
+      updateGpsDistances();
+    },
+    error => {
+      gpsTrackingActive = false;
+      gpsWatchId = null;
+      if (button) button.textContent = "Enable GPS";
+
+      const message = error.code === 1
+        ? "GPS permission was denied. Allow location access in Safari/Chrome settings and try again."
+        : error.code === 2
+          ? "GPS position is unavailable. Try again outdoors with a clear view of the sky."
+          : "GPS timed out. Try again outdoors on the course.";
+      if (status) status.textContent = message;
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 3000,
+      timeout: 12000
+    }
+  );
+}
+
+
 function renderHoleVisual(hole) {
   const visualCard = document.getElementById("hole-visual-card");
   const visualLabel = document.getElementById("hole-visual-label");
@@ -789,6 +916,7 @@ function renderCurrentHole() {
   document.getElementById("hole-details").textContent = `${hole.distance}${courses[selectedCourseKey].distanceUnit || "m"} · Par ${hole.par} · SI ${hole.stroke}`;
   document.getElementById("hole-number-badge").textContent = `Hole ${hole.hole} of ${course.length}`;
   renderHoleVisual(hole);
+  renderGpsPanel(hole);
   const holeNote = document.getElementById("hole-strategy-note");
   if (holeNote) {
     holeNote.textContent = hole.note || "Score first. We can add detailed notes for this hole later.";
@@ -1564,6 +1692,7 @@ document.getElementById("finish-round").addEventListener("click", saveRound);
 document.getElementById("reset-round").addEventListener("click", resetScores);
 document.getElementById("next-hole").addEventListener("click", nextHole);
 document.getElementById("previous-hole").addEventListener("click", previousHole);
+document.getElementById("gps-start-button").addEventListener("click", startGpsTracking);
 
 setPlayerCount(1);
 renderCourseFacts();
