@@ -308,6 +308,19 @@ function cleanAuthUrlIfNeeded() {
   window.history.replaceState({}, document.title, newUrl);
 }
 
+
+function authRedirectUrl() {
+  const githubPagesUrl = "https://wayneterminator.github.io/Course-Companion/";
+  const currentOrigin = window.location.origin || "";
+  const currentPath = window.location.pathname || "";
+
+  if (currentOrigin.includes("github.io")) return githubPagesUrl;
+
+  // Local testing cannot complete Supabase email login unless the local URL is also
+  // added to Supabase redirect URLs, so default email links back to GitHub Pages.
+  return githubPagesUrl;
+}
+
 function getActiveRoundDraft() {
   try {
     const draft = JSON.parse(localStorage.getItem(ACTIVE_ROUND_KEY) || "null");
@@ -480,13 +493,21 @@ async function initCloud() {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      detectSessionInUrl: true
+      detectSessionInUrl: true,
+      flowType: "implicit",
+      storageKey: "course-companion-auth"
     }
   });
   cloudAvailable = true;
 
-  const { data } = await supabaseClient.auth.getSession();
-  currentUser = data?.session?.user || null;
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) updateAccountUI(`Sign-in session issue: ${error.message}`);
+    currentUser = data?.session?.user || null;
+  } catch (error) {
+    updateAccountUI(`Sign-in session issue: ${error.message || "Could not read the saved session."}`);
+    currentUser = null;
+  }
 
   if (currentUser) cleanAuthUrlIfNeeded();
 
@@ -515,22 +536,27 @@ async function sendSignInLink() {
     return;
   }
 
-  const redirectTo = "https://wayneterminator.github.io/Course-Companion/";
+  const redirectTo = authRedirectUrl();
+  updateAccountUI("Sending sign-in email...");
 
-  const { error } = await supabaseClient.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: redirectTo,
-      shouldCreateUser: true
+  try {
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: redirectTo,
+        shouldCreateUser: true
+      }
+    });
+
+    if (error) {
+      updateAccountUI(`Sign-in error: ${error.message}`);
+      return;
     }
-  });
 
-  if (error) {
-    updateAccountUI(`Sign-in error: ${error.message}`);
-    return;
+    updateAccountUI("Sign-in link sent. Open the email link on this phone. It should return you to Course Companion.");
+  } catch (error) {
+    updateAccountUI(`Sign-in error: ${error.message || "Could not send sign-in email."}`);
   }
-
-  updateAccountUI("Sign-in link sent. Open the email link on this phone. It should return you to Course Companion.");
 }
 
 async function signOut() {
@@ -651,7 +677,7 @@ function selectCourse(key) {
   document.getElementById("setup-handicap-helper").textContent = setupHandicapHelpText(selected);
 
   const hero = document.getElementById("detail-hero-image");
-  hero.classList.remove("mashie-art-large", "championship-art-large", "kokstad-art-large", "margate-art-large");
+  hero.classList.remove("mashie-art-large", "championship-art-large", "kokstad-art-large", "margate-art-large", "scottburgh-art-large", "gowrie-art-large");
   hero.classList.add(selected.heroClass);
 
   renderCourseFacts(selected);

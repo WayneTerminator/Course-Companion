@@ -1,4 +1,4 @@
-const CACHE_NAME = "course-companion-v0-9-7";
+const CACHE_NAME = "course-companion-v0-9-8";
 
 const CORE_ASSETS = [
   "./manifest.json",
@@ -60,10 +60,27 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-  const url = new URL(event.request.url);
-
-  if (url.pathname.endsWith("/js/config.js")) return;
   if (event.request.method !== "GET") return;
+
+  const url = new URL(event.request.url);
+  const isSameOrigin = url.origin === self.location.origin;
+  const isCriticalAppFile =
+    event.request.mode === "navigate" ||
+    url.pathname.endsWith("/") ||
+    url.pathname.endsWith("/index.html") ||
+    url.pathname.endsWith("/js/app.js") ||
+    url.pathname.endsWith("/js/config.js") ||
+    url.pathname.endsWith("/css/style.css") ||
+    url.pathname.endsWith("/service-worker.js") ||
+    url.pathname.endsWith("/manifest.json");
+
+  if (isSameOrigin && isCriticalAppFile) {
+    event.respondWith(
+      fetch(event.request, { cache: "no-store" })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   event.respondWith(
     fetch(event.request)
