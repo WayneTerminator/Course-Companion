@@ -1,15 +1,25 @@
-# Course Companion v0.9.5
+# Course Companion v0.9.6
 
-Small guide-image correction.
+Adds Gowrie Farm as a playable course.
 
-## What changed
-- Replaced Mashie Hole 1 guide with the approved improved image.
-- Keeps v0.9.4 GPS yardage features.
-- Uses a new image filename to avoid cached old images.
+## What is new
+- Adds Gowrie Farm to the course list.
+- Loads all 18 holes for scoring.
+- Uses white tee distances as the default app distance.
+- Stores yellow, white, blue and purple tee distances for each hole.
+- Adds Gowrie guide images for holes 1–9 from the supplied course guide PDF.
+- Holes 10–18 are fully playable now and their guide images can be added in the next batch.
+
+## Course totals
+- Yellow: 6,407m
+- White: 6,056m
+- Blue: 5,570m
+- Purple: 4,872m
+- Par: 71
 
 ## Important
 - `js/config.js` is intentionally not included.
 - Keep your existing `js/config.js` when copying this update into your local project.
 
 ## Test URL after deployment
-https://wayneterminator.github.io/Course-Companion/index.html?v=095
+https://wayneterminator.github.io/Course-Companion/index.html?v=096

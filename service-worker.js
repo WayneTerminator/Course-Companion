@@ -1,4 +1,4 @@
-const CACHE_NAME = "course-companion-v0-9-5";
+const CACHE_NAME = "course-companion-v0-9-6";
 
 const CORE_ASSETS = [
   "./manifest.json",
@@ -19,6 +19,16 @@ const CORE_ASSETS = [
   "./assets/mashie-hole-guide-7-v4.png",
   "./assets/mashie-hole-guide-8-v4.png",
   "./assets/mashie-hole-guide-9-v4.png"
+,
+  "./assets/gowrie-hole-guide-1-v1.png",
+  "./assets/gowrie-hole-guide-2-v1.png",
+  "./assets/gowrie-hole-guide-3-v1.png",
+  "./assets/gowrie-hole-guide-4-v1.png",
+  "./assets/gowrie-hole-guide-5-v1.png",
+  "./assets/gowrie-hole-guide-6-v1.png",
+  "./assets/gowrie-hole-guide-7-v1.png",
+  "./assets/gowrie-hole-guide-8-v1.png",
+  "./assets/gowrie-hole-guide-9-v1.png"
 ];
 
 // Do not cache config.js. It contains local project-specific Supabase settings.

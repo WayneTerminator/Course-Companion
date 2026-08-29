@@ -1421,3 +1421,20 @@ body.hole-advance-flash {
   margin-top: 8px;
   margin-bottom: 0;
 }
+
+/* v0.9.6 Gowrie Farm course tile */
+.gowrie-art {
+  background:
+    linear-gradient(135deg, rgba(247, 241, 223, 0.22), rgba(6, 63, 43, 0.30)),
+    url("assets/gowrie-hole-guide-1-v1.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.gowrie-art-large {
+  background:
+    linear-gradient(135deg, rgba(247, 241, 223, 0.35), rgba(6, 63, 43, 0.36)),
+    url("assets/gowrie-hole-guide-1-v1.png");
+  background-size: cover;
+  background-position: center;
+}

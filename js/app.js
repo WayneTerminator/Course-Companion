@@ -200,6 +200,49 @@ const courses = {
       { hole: 18, distance: 408, par: 5, stroke: 12, note: "Accurate tee shot needed. Water right/diagonal before an uphill finish to a two-tier green." }
     ]
   }
+,
+  gowrie: {
+    name: "Gowrie Farm",
+    details: "18 holes · Par 71 · White tees 6,056m",
+    aboutTitle: "Classic Midlands course guide",
+    description: "Gowrie Farm is a full 18-hole course in the Midlands. This version uses the white tees as the default scoring distance and stores yellow, white, blue and purple tee distances for each hole.",
+    heroClass: "gowrie-art-large",
+    distanceUnit: "m",
+    facts: [
+      { label: "Holes", value: "18" },
+      { label: "Par", value: "71" },
+      { label: "White", value: "6,056m" },
+      { label: "Guides", value: "1–9" }
+    ],
+    notes: [
+      "All 18 Gowrie Farm holes are loaded for scoring.",
+      "Holes 1–9 include course-guide images from the supplied PDF.",
+      "Holes 10–18 are fully playable now; their guide images can be added later.",
+      "Yellow 6,407m · White 6,056m · Blue 5,570m · Purple 4,872m."
+    ],
+    handicapMode: "full",
+    handicapHelper: "For Gowrie Farm, enter your full 18-hole course handicap.",
+    holes: [
+      { hole: 1, name: "Anticipation", distance: 382, par: 4, stroke: 9, yellow: 392, white: 382, blue: 365, purple: 340, note: "Dog-leg to the right. Best line is close to the bunkers. Wetland is within reach for long drivers.", mapImage: "assets/gowrie-hole-guide-1-v1.png" },
+      { hole: 2, name: "Jabulani", distance: 181, par: 3, stroke: 15, yellow: 200, white: 181, blue: 160, purple: 142, note: "The hole lies in front of you. Be long rather than in the bunkers.", mapImage: "assets/gowrie-hole-guide-2-v1.png" },
+      { hole: 3, name: "Over The Road", distance: 425, par: 4, stroke: 3, yellow: 455, white: 425, blue: 405, purple: 350, note: "Two options: over the bunker or safer left. To carry the bunker requires about 210m.", mapImage: "assets/gowrie-hole-guide-3-v1.png" },
+      { hole: 4, name: "Moses", distance: 313, par: 4, stroke: 11, yellow: 330, white: 313, blue: 290, purple: 245, note: "Risk-and-reward hole. Long hitters can go for the flag; conservative line is at the two mounds.", mapImage: "assets/gowrie-hole-guide-4-v1.png" },
+      { hole: 5, name: "The Wall", distance: 354, par: 4, stroke: 7, yellow: 370, white: 354, blue: 330, purple: 270, note: "Stay close to the left edge of the fairway. Big hitters should not go much beyond 250m.", mapImage: "assets/gowrie-hole-guide-5-v1.png" },
+      { hole: 6, name: "Gong Rock", distance: 152, par: 3, stroke: 17, yellow: 165, white: 152, blue: 125, purple: 105, note: "Short right is a good place to miss.", mapImage: "assets/gowrie-hole-guide-6-v1.png" },
+      { hole: 7, name: "Long", distance: 490, par: 5, stroke: 1, yellow: 530, white: 490, blue: 450, purple: 420, note: "Over the sighting bunker is your line. Two bunkers are on the left edge of the fairway at about 240m and 250m.", mapImage: "assets/gowrie-hole-guide-7-v1.png" },
+      { hole: 8, name: "Nhlozane", distance: 428, par: 4, stroke: 5, yellow: 440, white: 428, blue: 380, purple: 320, note: "Open tee shot. Down the middle is good; big hitters can take on the left corner of the dog-leg.", mapImage: "assets/gowrie-hole-guide-8-v1.png" },
+      { hole: 9, name: "Duncan Price", distance: 275, par: 4, stroke: 13, yellow: 285, white: 275, blue: 260, purple: 240, note: "Short par 4 with trouble left and right if you miss the narrow green. Safe shot is about 200m short of the bunkers.", mapImage: "assets/gowrie-hole-guide-9-v1.png" },
+      { hole: 10, name: "Christopher Brown", distance: 470, par: 5, stroke: 10, yellow: 485, white: 470, blue: 450, purple: 415, note: "Par 5 reachable in two in the right conditions. Centre of the fairway is the line; watch the bunkers on the right." },
+      { hole: 11, name: "The Gambler", distance: 436, par: 4, stroke: 2, yellow: 460, white: 436, blue: 385, purple: 330, note: "The line is laid out in front of you. Difficult green to hold if you pitch short." },
+      { hole: 12, name: "The Folie", distance: 120, par: 3, stroke: 18, yellow: 130, white: 120, blue: 110, purple: 95, note: "Off the tee, distance is important." },
+      { hole: 13, name: "Paxton", distance: 502, par: 5, stroke: 6, yellow: 535, white: 502, blue: 475, purple: 410, note: "Aim at the reservoir in the distance. Fairway bunkers come into play for the second shot." },
+      { hole: 14, name: "Lwandile", distance: 164, par: 3, stroke: 16, yellow: 180, white: 164, blue: 140, purple: 125, note: "If you miss the green, make sure it is not on the right." },
+      { hole: 15, name: "The Baron", distance: 375, par: 4, stroke: 8, yellow: 390, white: 375, blue: 350, purple: 270, note: "A good drive is important. Otherwise it requires a blind second shot. Bunker in the middle of the fairway is a good line." },
+      { hole: 16, name: "Lal & Pauline", distance: 323, par: 4, stroke: 12, yellow: 335, white: 323, blue: 285, purple: 265, note: "A good drive would be over the wetland or an iron short of the wetland, leaving about 125m in." },
+      { hole: 17, name: "Strath Eden", distance: 171, par: 3, stroke: 14, yellow: 190, white: 171, blue: 165, purple: 135, note: "Watch out for Newman's bunker at the left front of the green; it is not always visible from the tee." },
+      { hole: 18, name: "Venn's Alley", distance: 495, par: 5, stroke: 4, yellow: 535, white: 495, blue: 445, purple: 395, note: "A good drive is important to reach the island stake for two. Big hitters can bring the lake and green in two into reach." }
+    ]
+  }
 };
 
 
@@ -903,10 +946,10 @@ function renderHoleVisual(hole) {
   } else {
     visualCard.classList.remove("has-visual");
     visualLabel.textContent = "Hole Guide";
-    visualSubtitle.textContent = "Guide map coming soon for this hole.";
+    visualSubtitle.textContent = "Guide image coming soon for this hole.";
     visualImage.hidden = true;
     visualImage.removeAttribute("src");
-    visualCaption.textContent = "Guide map placeholder — we can add a clean hole layout here later.";
+    visualCaption.textContent = "Guide image will be added for this hole later.";
   }
 }
 
